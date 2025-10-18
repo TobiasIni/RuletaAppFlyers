@@ -1,4 +1,4 @@
-import { Company } from '@/types/api';
+import { Company, TriviaConfig, MemotestConfig } from '@/types/api';
 import { getConfig } from '@/config/constants';
 
 export async function getCompanyData(): Promise<Company> {
@@ -31,6 +31,68 @@ export async function getCompanyData(): Promise<Company> {
     return data;
   } catch (error) {
     console.error('❌ Error al conectar con la API:', error);
+    throw error;
+  }
+}
+
+export async function getTriviaConfig(triviaId: number): Promise<TriviaConfig> {
+  const { apiBaseUrl } = getConfig();
+  
+  console.log('🔧 Obteniendo configuración de trivia:', triviaId);
+  
+  const url = `${apiBaseUrl}/trivias/${triviaId}/config`;
+  console.log('🌐 URL de la API:', url);
+
+  try {
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'accept': 'application/json',
+      },
+    });
+
+    console.log('📡 Respuesta de la API:', response.status, response.statusText);
+
+    if (!response.ok) {
+      throw new Error(`Error al obtener la configuración de la trivia: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    console.log('✅ Configuración de trivia recibida:', data);
+    return data;
+  } catch (error) {
+    console.error('❌ Error al conectar con la API de trivia:', error);
+    throw error;
+  }
+}
+
+export async function getMemotestConfig(memotestId: number): Promise<MemotestConfig> {
+  const { apiBaseUrl } = getConfig();
+  
+  console.log('🔧 Obteniendo configuración de memotest:', memotestId);
+  
+  const url = `${apiBaseUrl}/memotests/${memotestId}/config`;
+  console.log('🌐 URL de la API:', url);
+
+  try {
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'accept': 'application/json',
+      },
+    });
+
+    console.log('📡 Respuesta de la API:', response.status, response.statusText);
+
+    if (!response.ok) {
+      throw new Error(`Error al obtener la configuración del memotest: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    console.log('✅ Configuración de memotest recibida:', data);
+    return data;
+  } catch (error) {
+    console.error('❌ Error al conectar con la API de memotest:', error);
     throw error;
   }
 }

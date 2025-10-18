@@ -3,12 +3,15 @@
 import { useState, useEffect } from 'react';
 import { JuegoHabilitado, Company } from '@/types/api';
 import { getCompanyData } from '@/lib/api';
+import Trivia from './components/Trivia';
+import Memotest from './components/Memotest';
 
 export default function Home() {
   const [companyData, setCompanyData] = useState<Company | null>(null);
   const [games, setGames] = useState<JuegoHabilitado[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedGame, setSelectedGame] = useState<JuegoHabilitado | null>(null);
 
   useEffect(() => {
     const fetchCompanyData = async () => {
@@ -33,7 +36,25 @@ export default function Home() {
 
   const handleGameSelect = (game: JuegoHabilitado) => {
     console.log('Juego seleccionado:', game);
-    // Aquí implementarás la lógica para navegar al juego seleccionado
+    setSelectedGame(game);
+  };
+
+  const handleBackToMenu = () => {
+    setSelectedGame(null);
+  };
+
+  const getGameImage = (gameType: string) => {
+    const type = gameType.toLowerCase();
+    switch (type) {
+      case 'trivia':
+        return '/trivia.png';
+      case 'memotest':
+        return '/memotest.png';
+      case 'ruleta':
+        return '/ruleta.png';
+      default:
+        return '/trivia.png'; // fallback
+    }
   };
 
   if (loading) {
@@ -65,26 +86,35 @@ export default function Home() {
     );
   }
 
+  // Si hay un juego seleccionado, mostrar el juego correspondiente
+  if (selectedGame?.tipo === 'trivia') {
+    return <Trivia juegoId={selectedGame.juego_id} onBack={handleBackToMenu} />;
+  }
+
+  if (selectedGame?.tipo === 'memotest') {
+    return <Memotest juegoId={selectedGame.juego_id} onBack={handleBackToMenu} />;
+  }
+
+  // Si no hay juego seleccionado, mostrar el menú principal
   return (
     <div className="h-full flex flex-col">
       {/* Header */}
       <header 
         className="text-white p-6 text-center"
         style={{
-          background: `linear-gradient(135deg, ${companyData?.color_primario || '#667eea'} 0%, ${companyData?.color_secundario || '#764ba2'} 100%)`
+          background: "#000"
         }}
       >
         {companyData?.logo && (
           <div className="mb-4">
-            <img 
+           {/*  <img 
               src={companyData.logo} 
               alt={`Logo de ${companyData.nombre}`}
               className="h-16 w-auto mx-auto"
-            />
+            /> */}
           </div>
         )}
-        <h1 className="text-4xl font-bold mb-2">Selecciona un Juego</h1>
-        <p className="text-xl opacity-90">Elige el juego que quieres jugar</p>
+        <h1 className="text-4xl font-bold mb-2">SELECCIONA UN JUEGO</h1>
       </header>
 
       {/* Games Grid */}
@@ -98,30 +128,28 @@ export default function Home() {
             </div>
           </div>
         ) : (
-          <div className="grid grid-cols-2 gap-6 max-w-4xl mx-auto">
+          <div className="flex flex-col gap-6 max-w-4xl mx-auto">
             {games.map((game) => (
               <button
                 key={game.id}
                 onClick={() => handleGameSelect(game)}
-                className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-2 p-6 text-left border-2 border-transparent hover:border-blue-300"
+                className="bg-white rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-2 p-6 text-left border-2 border-gray-200 hover:border-blue-400 w-full backdrop-blur-sm"
               >
-                <div className="aspect-square bg-gradient-to-br from-blue-400 to-purple-500 rounded-lg mb-4 flex items-center justify-center">
-                  <div className="text-white text-4xl">🎮</div>
-                </div>
-                <h3 className="text-xl font-bold text-gray-800 mb-2">{game.nombre}</h3>
-                {game.descripcion && (
-                  <p className="text-gray-600 text-sm">{game.descripcion}</p>
-                )}
-                <div className="mt-2">
-                  <span className="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
-                    {game.tipo}
-                  </span>
-                </div>
-                <div className="mt-4 flex items-center text-blue-600 font-semibold">
-                  <span>Jugar</span>
-                  <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
+                <div className="w-full h-64  rounded-lg flex items-center justify-center overflow-hidden">
+                  <img 
+                    src={getGameImage(game.tipo)} 
+                    alt={`Imagen de ${game.nombre}`}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      // Fallback a emoji si la imagen no se carga
+                      e.currentTarget.style.display = 'none';
+                      const fallback = e.currentTarget.nextElementSibling as HTMLElement;
+                      if (fallback) {
+                        fallback.style.display = 'flex';
+                      }
+                    }}
+                  />
+                  <div className="text-white text-4xl hidden">🎮</div>
                 </div>
               </button>
             ))}
@@ -129,15 +157,7 @@ export default function Home() {
         )}
       </main>
 
-      {/* Footer */}
-      <footer 
-        className="p-4 text-center text-white"
-        style={{ backgroundColor: companyData?.color_terciario || '#f3f4f6' }}
-      >
-        <p className="text-gray-600">
-          {companyData?.nombre ? `${companyData.nombre} - ` : ''}Tótem de Juegos D3
-        </p>
-      </footer>
+     
     </div>
   );
 }
