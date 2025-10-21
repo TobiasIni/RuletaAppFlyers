@@ -154,8 +154,8 @@ export default function MemotestGame({ memotestConfig, onFinish, onBack }: Memot
   // Calcular tamaño del logo basado en cantidad de cartas
   const getLogoSize = () => {
     const cardCount = cards.length;
-    if (cardCount <= 8) return 'w-32 h-32';      // 4x2 = 8 cartas
-    if (cardCount <= 12) return 'w-24 h-24';     // 4x3 = 12 cartas
+    if (cardCount <= 8) return 'w-48 h-48';      // 4x2 = 8 cartas
+    if (cardCount <= 12) return 'w-36 h-36';     // 4x3 = 12 cartas
     if (cardCount <= 16) return 'w-20 h-20';     // 4x4 = 16 cartas
     if (cardCount <= 24) return 'w-16 h-16';       // 6x4 = 24 cartas
     return 'w-6 h-6';                            // Más de 24 cartas
@@ -311,7 +311,7 @@ export default function MemotestGame({ memotestConfig, onFinish, onBack }: Memot
                       <img 
                         src={card.imagen} 
                         alt={`Carta ${card.id}`}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-contain p-2"
                       />
                       {card.isMatched && (
                         <div className="absolute inset-0 flex items-center justify-center bg-green-500 bg-opacity-80">

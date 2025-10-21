@@ -12,6 +12,7 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedGame, setSelectedGame] = useState<JuegoHabilitado | null>(null);
+  const [clickedGameId, setClickedGameId] = useState<number | null>(null);
 
   useEffect(() => {
     const fetchCompanyData = async () => {
@@ -36,7 +37,12 @@ export default function Home() {
 
   const handleGameSelect = (game: JuegoHabilitado) => {
     console.log('Juego seleccionado:', game);
-    setSelectedGame(game);
+    setClickedGameId(game.id);
+    // Esperar 400ms para la animación antes de cambiar de vista
+    setTimeout(() => {
+      setSelectedGame(game);
+      setClickedGameId(null);
+    }, 400);
   };
 
   const handleBackToMenu = () => {
@@ -44,14 +50,16 @@ export default function Home() {
   };
 
   const getGameImage = (gameType: string) => {
+    if (!companyData) return '/trivia.png'; // fallback si no hay datos
+    
     const type = gameType.toLowerCase();
     switch (type) {
       case 'trivia':
-        return '/trivia.png';
+        return companyData.trivia_logo || '/trivia.png';
       case 'memotest':
-        return '/memotest.png';
+        return companyData.memotest_logo || '/memotest.png';
       case 'ruleta':
-        return '/ruleta.png';
+        return companyData.ruleta_logo || '/ruleta.png';
       default:
         return '/trivia.png'; // fallback
     }
@@ -118,7 +126,7 @@ export default function Home() {
       </header>
 
       {/* Games Grid */}
-      <main className="flex-1 p-8 overflow-y-auto">
+      <main className="flex-1 p-8 overflow-y-auto flex items-center justify-center">
         {games.length === 0 ? (
           <div className="flex items-center justify-center h-full">
             <div className="text-center">
@@ -128,18 +136,27 @@ export default function Home() {
             </div>
           </div>
         ) : (
-          <div className="flex flex-col gap-6 max-w-4xl mx-auto">
+          <div className="flex flex-col gap-6 w-full max-w-4xl h-full justify-center">
             {games.map((game) => (
               <button
                 key={game.id}
                 onClick={() => handleGameSelect(game)}
-                className="bg-white rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-2 p-6 text-left border-2 border-gray-200 hover:border-blue-400 w-full backdrop-blur-sm"
+                disabled={clickedGameId !== null}
+                className={`bg-white rounded-xl transition-all duration-300 ease-out transform p-4 border-4 border-gray-800 backdrop-blur-sm flex-1 flex flex-col
+                  ${clickedGameId === game.id 
+                    ? 'scale-105 shadow-[0_10px_0_0_rgba(0,0,0,0.25)] -translate-y-1' 
+                    : clickedGameId !== null
+                    ? 'opacity-60 scale-98'
+                    : 'shadow-[0_8px_0_0_rgba(0,0,0,0.2)] hover:shadow-[0_4px_0_0_rgba(0,0,0,0.2)] active:shadow-[0_2px_0_0_rgba(0,0,0,0.2)] hover:-translate-y-1 active:translate-y-1'
+                  }`}
               >
-                <div className="w-full h-64  rounded-lg flex items-center justify-center overflow-hidden">
+                <div className="w-full h-full rounded-lg flex items-center justify-center overflow-hidden">
                   <img 
                     src={getGameImage(game.tipo)} 
                     alt={`Imagen de ${game.nombre}`}
-                    className="w-full h-full object-cover"
+                    className={`w-full h-full object-contain p-4 transition-transform duration-300 ease-out ${
+                      clickedGameId === game.id ? 'scale-105' : ''
+                    }`}
                     onError={(e) => {
                       // Fallback a emoji si la imagen no se carga
                       e.currentTarget.style.display = 'none';

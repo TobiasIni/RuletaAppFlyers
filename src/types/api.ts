@@ -30,6 +30,9 @@ export interface Company {
   color_primario: string;
   color_secundario: string;
   color_terciario: string;
+  memotest_logo?: string;
+  trivia_logo?: string;
+  ruleta_logo?: string;
   created_at: string;
   updated_at: string;
   imagenes: Imagen[];
