@@ -107,7 +107,7 @@ export default function TriviaGame({ triviaConfig, onFinish, onBack }: TriviaGam
 
   const getAnswerStyle = (answer: string) => {
     if (gameState !== 'answered' && gameState !== 'timeout') {
-      return 'hover:scale-105 hover:shadow-lg';
+      return 'bg-white border-gray-800 text-black hover:scale-105 hover:shadow-lg';
     }
     
     if (isCorrectAnswer(answer)) {
@@ -118,7 +118,7 @@ export default function TriviaGame({ triviaConfig, onFinish, onBack }: TriviaGam
       return 'bg-red-500 text-white border-red-600';
     }
     
-    return 'bg-gray-200 text-gray-600';
+    return 'bg-white border-gray-800 text-black';
   };
 
   const progressPercentage = (timeLeft / 20) * 100;
@@ -128,29 +128,34 @@ export default function TriviaGame({ triviaConfig, onFinish, onBack }: TriviaGam
     <div className="h-full flex flex-col">
       {/* Header fijo */}
       <header 
-        className="text-white p-4 flex items-center justify-between"
-        style={{
-          background: `linear-gradient(135deg, ${triviaConfig.company.color_primario} 0%, ${triviaConfig.company.color_secundario} 100%)`
-        }}
+        className="bg-white p-4 flex items-center justify-center relative"
       >
         <button
           onClick={onBack}
-          className="flex items-center gap-2 px-4 py-2 bg-white bg-opacity-20 rounded-lg hover:bg-opacity-30 transition-all duration-300"
+          className="group absolute left-4 px-6 py-3 bg-gray-100 rounded-xl hover:bg-gray-200 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
         >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-          </svg>
-          <span>Volver al Menú</span>
+          <div className="flex items-center gap-3">
+            <div className="w-6 h-6 rounded-full bg-white flex items-center justify-center group-hover:bg-gray-100 transition-all duration-300">
+              <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </div>
+            <span className="font-semibold text-sm tracking-wide text-gray-800">Menú</span>
+          </div>
         </button>
         
-        <div className="flex items-center gap-4">
-          <span className="text-lg font-semibold">
-            Pregunta {currentQuestionIndex + 1} de {triviaConfig.questions.length}
-          </span>
-          <span className="text-lg font-bold">Puntuación: {score}</span>
-        </div>
+        {/* Imagen de la trivia centrada */}
+        {triviaConfig.company.trivia_logo ? (
+          <img 
+            src={triviaConfig.company.trivia_logo} 
+            alt="Trivia"
+            className="h-16 w-auto"
+          />
+        ) : (
+          <h1 className="text-2xl  text-gray-800">Trivia</h1>
+        )}
         
-        <div></div>
+        
       </header>
 
       {/* Contenido principal */}
@@ -159,7 +164,7 @@ export default function TriviaGame({ triviaConfig, onFinish, onBack }: TriviaGam
           <div className="flex items-center justify-center h-full">
             <div className="text-center">
               <div className="text-6xl mb-4">⏰</div>
-              <h2 className="text-3xl font-bold text-red-600 mb-4">¡Tiempo agotado!</h2>
+              <h2 className="text-3xl  text-red-600 mb-4">¡Tiempo agotado!</h2>
               <p className="text-xl text-gray-600">Pasando a la siguiente pregunta...</p>
             </div>
           </div>
@@ -194,7 +199,7 @@ export default function TriviaGame({ triviaConfig, onFinish, onBack }: TriviaGam
                     }}
                   />
                 </svg>
-                <div className={`absolute inset-0 flex items-center justify-center text-2xl font-bold ${isLowTime ? 'text-red-600 animate-pulse' : 'text-gray-700'}`}>
+                <div className={`absolute inset-0 flex items-center justify-center text-2xl  ${isLowTime ? 'text-red-600 animate-pulse' : 'text-gray-700'}`}>
                   {timeLeft}
                 </div>
               </div>
@@ -202,20 +207,20 @@ export default function TriviaGame({ triviaConfig, onFinish, onBack }: TriviaGam
 
             {/* Pregunta */}
             <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold text-gray-800 mb-4">
+              <h2 className="text-3xl  text-gray-800 mb-4">
                 {currentQuestion.pregunta}
               </h2>
               {currentQuestion.pregunta_imagen && (
                 <img 
                   src={currentQuestion.pregunta_imagen} 
                   alt="Imagen de la pregunta"
-                  className="max-w-md mx-auto rounded-lg shadow-lg"
+                  className="max-w-xs mx-auto rounded-lg"
                 />
               )}
             </div>
 
             {/* Opciones de respuesta */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-8">
               {[currentQuestion.opcion_a, currentQuestion.opcion_b, currentQuestion.opcion_c, currentQuestion.opcion_d]
                 .filter(Boolean)
                 .map((option, index) => {
@@ -229,27 +234,27 @@ export default function TriviaGame({ triviaConfig, onFinish, onBack }: TriviaGam
                       onClick={() => handleAnswer(letter)}
                       disabled={gameState !== 'question'}
                       className={`
-                        p-6 rounded-xl border-2 shadow-lg transition-all duration-300 text-left
+                        p-6 rounded-xl border-4 shadow-lg transition-all duration-300 text-left h-40 min-h-40
                         ${getAnswerStyle(letter)}
                         ${gameState === 'question' ? 'cursor-pointer' : 'cursor-not-allowed'}
                       `}
                     >
                       <div className="flex items-center gap-4">
                         <div className={`
-                          w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg
+                          flex items-center justify-center  text-6xl
                           ${gameState === 'question' 
-                            ? 'bg-blue-500 text-white' 
+                            ? 'text-blue-500' 
                             : isCorrect 
-                              ? 'bg-green-500 text-white' 
+                              ? 'text-green-500' 
                               : isSelected 
-                                ? 'bg-red-500 text-white'
-                                : 'bg-gray-300 text-gray-600'
+                                ? 'text-red-500'
+                                : 'text-gray-800'
                           }
                         `}>
                           {letter}
                         </div>
                         <div className="flex-1">
-                          <p className="text-lg font-medium">{option}</p>
+                          <p className="text-2xl font-medium">{option}</p>
                         </div>
                         {gameState === 'answered' && isCorrect && (
                           <div className="text-green-600 text-2xl">✓</div>

@@ -22,7 +22,7 @@ export default function MemotestGame({ memotestConfig, onFinish, onBack }: Memot
   const [flippedCards, setFlippedCards] = useState<number[]>([]);
   const [timeLeft, setTimeLeft] = useState(0);
   const [pairsFound, setPairsFound] = useState(0);
-  const [gameStarted, setGameStarted] = useState(false);
+  const [gameStarted, setGameStarted] = useState(true);
   const [gameEnded, setGameEnded] = useState(false);
 
   const gameTime = memotestConfig.memotest.tiempo || 60;
@@ -135,10 +135,6 @@ export default function MemotestGame({ memotestConfig, onFinish, onBack }: Memot
     }
   };
 
-  const startGame = () => {
-    setGameStarted(true);
-  };
-
   const progressPercentage = (timeLeft / gameTime) * 100;
   const isLowTime = timeLeft <= gameTime * 0.2;
 
@@ -160,51 +156,6 @@ export default function MemotestGame({ memotestConfig, onFinish, onBack }: Memot
     if (cardCount <= 24) return 'w-16 h-16';       // 6x4 = 24 cartas
     return 'w-6 h-6';                            // Más de 24 cartas
   };
-
-  if (!gameStarted) {
-    return (
-      <div className="h-full flex flex-col">
-        <header 
-          className="text-white p-4 flex items-center justify-between"
-          style={{
-            background: `linear-gradient(135deg, ${memotestConfig.company.color_primario} 0%, ${memotestConfig.company.color_secundario} 100%)`
-          }}
-        >
-          <button
-            onClick={onBack}
-            className="group relative px-6 py-3 bg-white rounded-xl hover:bg-gray-100 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
-          >
-            <div className="flex items-center gap-3">
-              <div className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center group-hover:bg-gray-200 transition-all duration-300">
-                <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                </svg>
-              </div>
-              <span className="font-semibold text-sm tracking-wide text-gray-800">Menú</span>
-            </div>
-          </button>
-         
-        </header>
-
-        <main className="flex-1 flex items-center justify-center p-8">
-          <div className="text-center">
-            <div className="text-6xl mb-4">🎯</div>
-            <h2 className="text-3xl font-bold text-gray-800 mb-4">¡Preparado para jugar!</h2>
-            <p className="text-gray-600 mb-8">Tienes {gameTime} segundos para encontrar {totalPairs} parejas</p>
-            <button
-              onClick={startGame}
-              className="px-8 py-4 text-white font-bold text-xl rounded-xl hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
-              style={{
-                background: `linear-gradient(135deg, ${memotestConfig.company.color_primario} 0%, ${memotestConfig.company.color_secundario} 100%)`
-              }}
-            >
-              ¡Comenzar!
-            </button>
-          </div>
-        </main>
-      </div>
-    );
-  }
 
   return (
     <div className="h-full flex flex-col">
@@ -265,7 +216,7 @@ export default function MemotestGame({ memotestConfig, onFinish, onBack }: Memot
                 }}
               />
             </svg>
-            <div className={`absolute inset-0 flex items-center justify-center text-2xl font-bold ${isLowTime ? 'text-red-600 animate-pulse' : 'text-gray-700'}`}>
+            <div className={`absolute inset-0 flex items-center justify-center text-2xl  ${isLowTime ? 'text-red-600 animate-pulse' : 'text-gray-700'}`}>
               {timeLeft}
             </div>
           </div>

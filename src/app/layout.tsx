@@ -1,13 +1,6 @@
 import type { Metadata } from "next";
-import { Barlow } from "next/font/google";
 import "./globals.css";
 import DynamicLayout from "./components/DynamicLayout";
-
-const bogle = Barlow({
-  variable: "--font-bogle",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-});
 
 export const metadata: Metadata = {
   title: "Tótem de Juegos D3",
@@ -21,9 +14,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
-      <body
-        className={`${bogle.variable} antialiased`}
-      >
+      <body className="antialiased">
         <DynamicLayout>
           {children}
         </DynamicLayout>

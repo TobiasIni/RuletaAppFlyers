@@ -69,84 +69,83 @@ export default function MemotestResults({
       </header>
 
       {/* Contenido principal */}
-      <main className="flex-1 flex items-center justify-center p-8">
-        <div className="text-center max-w-2xl">
-          {/* Logo de la empresa si existe */}
+      <main className="flex-1 flex p-8 pt-4">
+        <div className="text-center max-w-4xl w-full flex flex-col items-center justify-start">
+          {/* Logo de la empresa en grande */}
           {memotestConfig.company.logo && (
-            <div className="mb-8">
+            <div className="mb-12 mt-4">
               <img 
                 src={memotestConfig.company.logo} 
                 alt={`Logo de ${memotestConfig.company.nombre}`}
-                className="h-20 w-auto mx-auto"
+                className="h-64 w-auto mx-auto"
               />
             </div>
           )}
 
-
           {/* Estadísticas */}
           <div 
-            className="bg-white rounded-2xl shadow-2xl p-8 mb-8"
+            className="bg-white rounded-2xl shadow-2xl p-12 mb-12 max-w-3xl w-full"
             style={{ border: `4px solid ${memotestConfig.company.color_primario}` }}
           >
-            <h3 className="text-2xl font-bold text-gray-800 mb-6">Estadísticas</h3>
+            <h3 className="text-3xl text-gray-800 mb-8">Estadísticas</h3>
             
-            <div className="grid grid-cols-2 gap-6 mb-6">
+            <div className="grid grid-cols-2 gap-8 mb-8">
               {/* Parejas encontradas */}
               <div className="text-center">
-                <div className="text-3xl font-bold mb-2" style={{ color: memotestConfig.company.color_primario }}>
+                <div className="text-5xl mb-3" style={{ color: memotestConfig.company.color_primario }}>
                   {pairsFound}
                 </div>
-                <div className="text-gray-600">Parejas encontradas</div>
-                <div className="text-sm text-gray-500">de {totalPairs} total</div>
+                <div className="text-gray-600 text-xl mb-1">Parejas encontradas</div>
+                <div className="text-lg text-gray-500">de {totalPairs} total</div>
               </div>
 
               {/* Tiempo usado */}
               <div className="text-center">
-                <div className="text-3xl font-bold mb-2" style={{ color: memotestConfig.company.color_secundario }}>
+                <div className="text-5xl mb-3" style={{ color: memotestConfig.company.color_secundario }}>
                   {timeUsed}s
                 </div>
-                <div className="text-gray-600">Tiempo usado</div>
-                <div className="text-sm text-gray-500">de {gameTime}s disponibles</div>
+                <div className="text-gray-600 text-xl mb-1">Tiempo usado</div>
+                <div className="text-lg text-gray-500">de {gameTime}s disponibles</div>
               </div>
             </div>
 
             {/* Barra de progreso */}
-            <div className="w-full bg-gray-200 rounded-full h-4 mb-4">
+            <div className="w-full bg-gray-200 rounded-full h-6 mb-5">
               <div 
-                className="h-4 rounded-full transition-all duration-1000"
+                className="h-6 rounded-full transition-all duration-1000"
                 style={{ 
                   width: `${percentage}%`,
                   background: `linear-gradient(135deg, ${memotestConfig.company.color_primario} 0%, ${memotestConfig.company.color_secundario} 100%)`
                 }}
               ></div>
             </div>
-            <div className="text-center text-lg font-semibold text-gray-700">
+            <div className="text-center text-2xl text-gray-700">
               {percentage}% completado
             </div>
           </div>
 
           {/* Mensaje adicional */}
           {isWin && (
-            <div className="mb-8 p-4 bg-green-100 rounded-xl">
-              <p className="text-green-800 font-semibold">
+            <div className="mb-10 p-6 bg-green-100 rounded-2xl max-w-3xl w-full">
+              <p className="text-green-800 text-xl">
                 ¡Excelente memoria! Encontraste todas las parejas en {timeUsed} segundos.
               </p>
             </div>
           )}
 
           {isTimeUp && !isWin && (
-            <div className="mb-8 p-4 bg-red-100 rounded-xl">
-              <p className="text-red-800 font-semibold">
+            <div className="mb-10 p-6 bg-red-100 rounded-2xl max-w-3xl w-full">
+              <p className="text-red-800 text-xl">
                 Se acabó el tiempo. Encontraste {pairsFound} de {totalPairs} parejas.
               </p>
             </div>
           )}
 
           {/* Botones de acción */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-6 justify-center mt-8">
             <button
               onClick={onPlayAgain}
-              className="px-8 py-4 text-white font-bold text-xl rounded-xl hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
+              className="px-16 py-6 text-white text-3xl rounded-2xl hover:scale-105 transition-all duration-300 shadow-xl hover:shadow-2xl"
               style={{
                 background: `linear-gradient(135deg, ${memotestConfig.company.color_primario} 0%, ${memotestConfig.company.color_secundario} 100%)`
               }}
@@ -156,7 +155,7 @@ export default function MemotestResults({
             
             <button
               onClick={onBack}
-              className="px-8 py-4 bg-gray-600 text-white font-bold text-xl rounded-xl hover:bg-gray-700 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
+              className="px-16 py-6 bg-gray-600 text-white text-3xl rounded-2xl hover:bg-gray-700 hover:scale-105 transition-all duration-300 shadow-xl hover:shadow-2xl"
             >
               Volver al Menú
             </button>

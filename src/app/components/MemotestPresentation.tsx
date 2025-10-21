@@ -34,44 +34,31 @@ export default function MemotestPresentation({ memotestConfig, onStart, onBack }
             <span className="font-semibold text-sm tracking-wide text-gray-800">Menú</span>
           </div>
         </button>
-        <h1 className="text-2xl font-bold">Memotest</h1>
+        <h1 className="text-2xl ">Memotest</h1>
         <div></div> {/* Spacer para centrar el título */}
       </header>
 
       {/* Contenido principal */}
-      <main className="flex-1 flex items-center justify-center p-8">
-        <div className="text-center max-w-2xl">
-          {/* Logo de la empresa si existe */}
+      <main className="flex-1 flex p-8 pt-4">
+        <div className="text-center max-w-4xl w-full flex flex-col items-center justify-start">
+          {/* Logo de la empresa en grande */}
           {company.logo && (
-            <div className="mb-8">
+            <div className="mb-12 mt-4">
               <img 
                 src={company.logo} 
                 alt={`Logo de ${company.nombre}`}
-                className="h-20 w-auto mx-auto"
+                className="h-64 w-auto mx-auto"
               />
             </div>
           )}
 
-          {/* Título del memotest */}
-          <h2 
-            className="text-4xl font-bold mb-4"
-            style={{ color: company.color_primario }}
-          >
-            {memotest.nombre}
-          </h2>
-
-          {/* Descripción */}
-          <p className="text-xl text-gray-600 mb-8">
-            {memotest.descripcion}
-          </p>
-
-          {/* Instrucciones */}
+          {/* Instrucciones con tamaño más grande */}
           <div 
-            className="bg-gray-100 rounded-xl p-6 mb-8"
+            className="bg-gray-100 rounded-2xl p-12 mb-16 w-full max-w-3xl"
             style={{ borderColor: company.color_secundario }}
           >
-            <h3 className="text-lg font-semibold mb-4 text-gray-800">Instrucciones:</h3>
-            <ul className="text-gray-600 space-y-2">
+            <h3 className="text-4xl mb-8 text-gray-800">Instrucciones:</h3>
+            <ul className="text-gray-700 space-y-5 text-2xl">
               <li>• Tienes {gameTime} segundos para encontrar todas las parejas</li>
               <li>• Haz clic en las cartas para voltearlas</li>
               <li>• Encuentra las parejas que coincidan</li>
@@ -82,12 +69,12 @@ export default function MemotestPresentation({ memotestConfig, onStart, onBack }
           {/* Botón comenzar */}
           <button
             onClick={onStart}
-            className="px-8 py-4 text-white font-bold text-xl rounded-xl hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
+            className="mt-20 px-16 py-6 text-white text-3xl rounded-2xl hover:scale-105 transition-all duration-300 shadow-xl hover:shadow-2xl"
             style={{
               background: `linear-gradient(135deg, ${company.color_primario} 0%, ${company.color_secundario} 100%)`
             }}
           >
-            Comenzar Memotest
+            A jugar!
           </button>
         </div>
       </main>

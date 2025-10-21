@@ -81,7 +81,7 @@ export default function Home() {
       <div className="flex items-center justify-center h-full">
         <div className="text-center p-8">
           <div className="text-red-500 text-6xl mb-4">⚠️</div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">Error</h2>
+          <h2 className="text-2xl  text-gray-800 mb-2">Error</h2>
           <p className="text-gray-600 mb-4">{error}</p>
           <button 
             onClick={() => window.location.reload()} 
@@ -110,19 +110,11 @@ export default function Home() {
       <header 
         className="text-white p-6 text-center"
         style={{
-          background: "#000"
+          background: "transparent"
         }}
       >
-        {companyData?.logo && (
-          <div className="mb-4">
-           {/*  <img 
-              src={companyData.logo} 
-              alt={`Logo de ${companyData.nombre}`}
-              className="h-16 w-auto mx-auto"
-            /> */}
-          </div>
-        )}
-        <h1 className="text-4xl font-bold mb-2">SELECCIONA UN JUEGO</h1>
+      
+        <h1 className="text-6xl font-extrabold mb-2">SELECCIONA UN JUEGO</h1>
       </header>
 
       {/* Games Grid */}
@@ -131,18 +123,21 @@ export default function Home() {
           <div className="flex items-center justify-center h-full">
             <div className="text-center">
               <div className="text-6xl mb-4">🎮</div>
-              <h2 className="text-2xl font-bold text-gray-800 mb-2">No hay juegos disponibles</h2>
+              <h2 className="text-2xl  text-gray-800 mb-2">No hay juegos disponibles</h2>
               <p className="text-gray-600">No se encontraron juegos para esta empresa.</p>
             </div>
           </div>
         ) : (
-          <div className="flex flex-col gap-6 w-full max-w-4xl h-full justify-center">
+          <div className="flex flex-col gap-6 w-full max-w-4xl h-full items-center justify-center">
             {games.map((game) => (
               <button
                 key={game.id}
                 onClick={() => handleGameSelect(game)}
                 disabled={clickedGameId !== null}
-                className={`bg-white rounded-xl transition-all duration-300 ease-out transform p-4 border-4 border-gray-800 backdrop-blur-sm flex-1 flex flex-col
+                style={{ 
+                  height: `calc((100% - ${(3 - 1) * 1.5}rem) / 3)`
+                }}
+                className={`bg-white rounded-2xl transition-all duration-300 ease-out transform p-4 border-6 border-gray-800 backdrop-blur-sm flex flex-col w-full
                   ${clickedGameId === game.id 
                     ? 'scale-105 shadow-[0_10px_0_0_rgba(0,0,0,0.25)] -translate-y-1' 
                     : clickedGameId !== null
