@@ -161,17 +161,14 @@ export default function MemotestGame({ memotestConfig, onFinish, onBack }: Memot
     <div className="h-full flex flex-col">
       {/* Header fijo */}
       <header 
-        className="text-white p-4 flex items-center justify-between"
-        style={{
-          background: `linear-gradient(135deg, ${memotestConfig.company.color_primario} 0%, ${memotestConfig.company.color_secundario} 100%)`
-        }}
+        className="bg-white p-4 flex items-center justify-center relative"
       >
         <button
           onClick={onBack}
-          className="group relative px-6 py-3 bg-white rounded-xl hover:bg-gray-100 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
+          className="group absolute left-4 px-6 py-3 bg-gray-100 rounded-xl hover:bg-gray-200 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
         >
           <div className="flex items-center gap-3">
-            <div className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center group-hover:bg-gray-200 transition-all duration-300">
+            <div className="w-6 h-6 rounded-full bg-white flex items-center justify-center group-hover:bg-gray-100 transition-all duration-300">
               <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
@@ -180,9 +177,16 @@ export default function MemotestGame({ memotestConfig, onFinish, onBack }: Memot
           </div>
         </button>
         
-      
-        
-        <div></div>
+        {/* Imagen del memotest centrada */}
+        {memotestConfig.company.memotest_logo ? (
+          <img 
+            src={memotestConfig.company.memotest_logo} 
+            alt="Memotest"
+            className="h-16 w-auto"
+          />
+        ) : (
+          <h1 className="text-2xl text-gray-800">Memotest</h1>
+        )}
       </header>
 
       {/* Contenido principal */}
