@@ -1,0 +1,14 @@
+services:
+  juegos-d3-front:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3010:3010"
+    environment:
+      - NODE_ENV=production
+      - COMPANY_ID=${COMPANY_ID}
+      - API_BASE_URL=${API_BASE_URL}
+    restart: unless-stopped
+    container_name: juegos-d3-front
+
