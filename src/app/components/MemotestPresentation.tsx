@@ -14,61 +14,15 @@ export default function MemotestPresentation({ memotestConfig, onStart, onBack }
 
   return (
     <div className="h-full flex flex-col">
-      {/* Header fijo con botón volver */}
-      <header 
-        className="bg-white p-4 flex items-center justify-center relative"
-      >
-        <button
-          onClick={onBack}
-          className="group absolute left-4 px-6 py-3 bg-gray-100 rounded-xl hover:bg-gray-200 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
-        >
-          <div className="flex items-center gap-3">
-            <div className="w-6 h-6 rounded-full bg-white flex items-center justify-center group-hover:bg-gray-100 transition-all duration-300">
-              <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-            </div>
-            <span className="font-semibold text-sm tracking-wide text-gray-800">Menú</span>
-          </div>
-        </button>
-        
-        {/* Imagen del memotest centrada */}
-        {company.memotest_logo ? (
-          <img 
-            src={company.memotest_logo} 
-            alt="Memotest"
-            className="h-16 w-auto"
-            onError={(e) => {
-              console.error('Error al cargar imagen de memotest:', company.memotest_logo);
-              e.currentTarget.style.display = 'none';
-            }}
-          />
-        ) : (
-          <h1 className="text-2xl text-gray-800">Memotest</h1>
-        )}
-      </header>
-
-      {/* Contenido principal */}
-      <main className="flex-1 flex p-8 pt-4">
-        <div className="text-center max-w-4xl w-full flex flex-col items-center justify-start">
-          {/* Logo de la empresa en grande */}
-          {company.logo && (
-            <div className="mb-12 mt-4">
-              <img 
-                src={company.logo} 
-                alt={`Logo de ${company.nombre}`}
-                className="h-64 w-auto mx-auto"
-              />
-            </div>
-          )}
-
-          {/* Instrucciones con tamaño más grande */}
+      {/* Contenido principal sin header */}
+      <main className="flex-1 flex p-8">
+        <div className="text-center max-w-4xl w-full flex flex-col items-center justify-center">
+          {/* Instrucciones con letra más grande y texto blanco */}
           <div 
-            className="bg-gray-100 rounded-2xl p-12 mb-16 w-full max-w-3xl"
-            style={{ borderColor: company.color_secundario }}
+            className="rounded-2xl p-12 mb-16 w-full max-w-3xl"
           >
-            <h3 className="text-4xl mb-8 text-gray-800">Instrucciones:</h3>
-            <ul className="text-gray-700 space-y-5 text-2xl">
+            <h3 className="text-9xl mb-32 text-white">Instrucciones</h3>
+            <ul className="text-white space-y-5 text-5xl">
               <li>• Tienes {gameTime} segundos para encontrar todas las parejas</li>
               <li>• Haz clic en las cartas para voltearlas</li>
               <li>• Encuentra las parejas que coincidan</li>
@@ -79,12 +33,37 @@ export default function MemotestPresentation({ memotestConfig, onStart, onBack }
           {/* Botón comenzar */}
           <button
             onClick={onStart}
-            className="mt-20 px-16 py-6 text-white text-3xl rounded-2xl hover:scale-105 transition-all duration-300 shadow-xl hover:shadow-2xl"
+            className="relative mt-20 px-24 py-10 text-white text-5xl rounded-2xl hover:scale-105 transition-all duration-500 shadow-xl hover:shadow-2xl overflow-hidden group"
             style={{
-              background: `linear-gradient(135deg, ${company.color_primario} 0%, ${company.color_secundario} 100%)`
+              background: `transparent`,
+              backdropFilter: 'blur(10px)',
+              border: '2px solid rgb(255, 255, 255)',
             }}
           >
-            A jugar!
+            {/* Efecto de brillo líquido */}
+            <div 
+              className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+              style={{
+                background: `radial-gradient(circle at center, rgba(255, 255, 255, 0.3) 0%, transparent 70%)`,
+                animation: 'liquidMove 3s ease-in-out infinite'
+              }}
+            />
+            {/* Reflejo superior */}
+            <div 
+              className="absolute top-0 left-0 right-0 h-1/3 opacity-30"
+              style={{
+                background: 'linear-gradient(180deg, rgba(255, 255, 255, 0.4) 0%, transparent 100%)',
+                borderRadius: '1rem 1rem 0 0'
+              }}
+            />
+            <span className="relative z-10" style={{ letterSpacing: '0.1em' }}>¡A jugar!</span>
+            <style jsx>{`
+              @keyframes liquidMove {
+                0%, 100% { transform: translate(0%, 0%) scale(1); }
+                33% { transform: translate(30%, -30%) scale(1.2); }
+                66% { transform: translate(-30%, 30%) scale(1.1); }
+              }
+            `}</style>
           </button>
         </div>
       </main>

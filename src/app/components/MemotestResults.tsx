@@ -60,60 +60,17 @@ export default function MemotestResults({
   }, [isWin]);
 
   const getResultMessage = () => {
-    if (isWin) return "¡Ganaste! 🎉";
-    if (isTimeUp) return "Tiempo agotado ⏰";
-    return "¡Bien hecho! 👏";
-  };
-
-  const getResultColor = () => {
-    if (isWin) return "text-green-600";
-    if (isTimeUp) return "text-red-600";
-    return "text-blue-600";
-  };
-
-  const getResultEmoji = () => {
-    if (isWin) return "🏆";
-    if (isTimeUp) return "⏰";
-    return "👍";
+    if (isWin) return "¡GANASTE!";
+    return "¡GRACIAS POR PARTICIPAR!";
   };
 
   return (
     <div className="h-full flex flex-col">
-      {/* Header fijo */}
-      <header 
-        className="bg-white p-4 flex items-center justify-center relative"
-      >
-        <button
-          onClick={onBack}
-          className="group absolute left-4 px-6 py-3 bg-gray-100 rounded-xl hover:bg-gray-200 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
-        >
-          <div className="flex items-center gap-3">
-            <div className="w-6 h-6 rounded-full bg-white flex items-center justify-center group-hover:bg-gray-100 transition-all duration-300">
-              <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-            </div>
-            <span className="font-semibold text-sm tracking-wide text-gray-800">Menú</span>
-          </div>
-        </button>
-        
-        {/* Imagen del memotest centrada */}
-        {memotestConfig.company.memotest_logo ? (
-          <img 
-            src={memotestConfig.company.memotest_logo} 
-            alt="Memotest"
-            className="h-16 w-auto"
-          />
-        ) : (
-          <h1 className="text-2xl text-gray-800">Resultados</h1>
-        )}
-      </header>
-
-      {/* Contenido principal */}
+      {/* Contenido principal sin header */}
       <main className="flex-1 flex p-8 pt-4">
         <div className="text-center max-w-4xl w-full flex flex-col items-center justify-start">
           {/* Logo de la empresa en grande */}
-          {memotestConfig.company.logo && (
+        {/*   {memotestConfig.company.logo && (
             <div className="mb-12 mt-4">
               <img 
                 src={memotestConfig.company.logo} 
@@ -121,17 +78,17 @@ export default function MemotestResults({
                 className="h-64 w-auto mx-auto"
               />
             </div>
-          )}
+          )} */}
 
           {/* Estadísticas */}
-          <div 
+          {/* <div 
             className="bg-white rounded-2xl shadow-2xl p-12 mb-12 max-w-3xl w-full"
             style={{ border: `4px solid ${memotestConfig.company.color_primario}` }}
           >
             <h3 className="text-3xl text-gray-800 mb-8">Estadísticas</h3>
             
             <div className="grid grid-cols-2 gap-8 mb-8">
-              {/* Parejas encontradas */}
+             
               <div className="text-center">
                 <div className="text-5xl mb-3" style={{ color: memotestConfig.company.color_primario }}>
                   {pairsFound}
@@ -140,7 +97,7 @@ export default function MemotestResults({
                 <div className="text-lg text-gray-500">de {totalPairs} total</div>
               </div>
 
-              {/* Tiempo usado */}
+              
               <div className="text-center">
                 <div className="text-5xl mb-3" style={{ color: memotestConfig.company.color_secundario }}>
                   {timeUsed}s
@@ -150,7 +107,6 @@ export default function MemotestResults({
               </div>
             </div>
 
-            {/* Barra de progreso */}
             <div className="w-full bg-gray-200 rounded-full h-6 mb-5">
               <div 
                 className="h-6 rounded-full transition-all duration-1000"
@@ -163,40 +119,76 @@ export default function MemotestResults({
             <div className="text-center text-2xl text-gray-700">
               {percentage}% completado
             </div>
-          </div>
+          </div>| 
+
+          
 
           {/* Mensaje adicional */}
-          {isWin && (
-            <div className="mb-10 p-6 bg-green-100 rounded-2xl max-w-3xl w-full">
-              <p className="text-green-800 text-xl">
+
+        <div className="mb-10">
+                  
+            <h2 className={`text-9xl mb-32 mt-24 text-white`}>
+              {getResultMessage()}
+            </h2>
+          </div>
+          {isWin ? (
+            <div className="mb-10 p-6 rounded-2xl max-w-3xl w-full">
+              <p className="text-white text-6xl mt-24">
                 ¡Excelente memoria! Encontraste todas las parejas en {timeUsed} segundos.
               </p>
             </div>
-          )}
-
-          {isTimeUp && !isWin && (
-            <div className="mb-10 p-6 bg-red-100 rounded-2xl max-w-3xl w-full">
-              <p className="text-red-800 text-xl">
-                Se acabó el tiempo. Encontraste {pairsFound} de {totalPairs} parejas.
+          ) : (
+            <div className="mb-10 p-6 rounded-2xl max-w-3xl w-full">
+              <p className="text-white text-6xl mt-24">
+                Se acabó el tiempo. 
+              </p>
+              <p className="text-white text-6xl mt-24">
+              Encontraste {pairsFound} de {totalPairs} parejas. 
               </p>
             </div>
           )}
 
           {/* Botones de acción */}
-          <div className="flex flex-col sm:flex-row gap-6 justify-center mt-8">
-            <button
+          <div className="flex flex-col sm:flex-row gap-6 justify-center mt-20">
+          <button
               onClick={onPlayAgain}
-              className="px-16 py-6 text-white text-3xl rounded-2xl hover:scale-105 transition-all duration-300 shadow-xl hover:shadow-2xl"
+              className="relative px-24 py-10 text-white text-5xl rounded-2xl hover:scale-105 transition-all duration-500 shadow-xl hover:shadow-2xl overflow-hidden group"
               style={{
-                background: `linear-gradient(135deg, ${memotestConfig.company.color_primario} 0%, ${memotestConfig.company.color_secundario} 100%)`
+                background: `transparent`,
+                backdropFilter: 'blur(10px)',
+                border: '2px solid rgba(255, 255, 255, 0.2)',
+                boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.37), inset 0 0 20px rgba(255, 255, 255, 0.1)'
               }}
             >
-              Jugar de Nuevo
+              {/* Efecto de brillo líquido */}
+              <div 
+                className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                style={{
+                  background: `radial-gradient(circle at center, rgba(255, 255, 255, 0.3) 0%, transparent 70%)`,
+                  animation: 'liquidMove 3s ease-in-out infinite'
+                }}
+              />
+              {/* Reflejo superior */}
+              <div 
+                className="absolute top-0 left-0 right-0 h-1/3 opacity-30"
+                style={{
+                  background: 'linear-gradient(180deg, rgba(255, 255, 255, 0.4) 0%, transparent 100%)',
+                  borderRadius: '1rem 1rem 0 0'
+                }}
+              />
+              <span className="relative z-10">Jugar de Nuevo</span>
+              <style jsx>{`
+                @keyframes liquidMove {
+                  0%, 100% { transform: translate(0%, 0%) scale(1); }
+                  33% { transform: translate(30%, -30%) scale(1.2); }
+                  66% { transform: translate(-30%, 30%) scale(1.1); }
+                }
+              `}</style>
             </button>
             
             <button
               onClick={onBack}
-              className="px-16 py-6 bg-gray-600 text-white text-3xl rounded-2xl hover:bg-gray-700 hover:scale-105 transition-all duration-300 shadow-xl hover:shadow-2xl"
+              className="px-24 py-10 bg-gray-600 text-white text-5xl rounded-2xl hover:bg-gray-700 hover:scale-105 transition-all duration-300 shadow-xl hover:shadow-2xl"
             >
               Volver al Menú
             </button>

@@ -61,7 +61,7 @@ export default function Memotest({ juegoId, onBack }: MemotestProps) {
 
   if (state === 'loading') {
     return (
-      <div className="h-full w-full flex items-center justify-center bg-white">
+      <div className="h-full w-full flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-4"></div>
           <p className="text-xl text-gray-600">Cargando memotest...</p>
@@ -72,7 +72,7 @@ export default function Memotest({ juegoId, onBack }: MemotestProps) {
 
   if (error && !memotestConfig) {
     return (
-      <div className="h-full w-full flex items-center justify-center bg-white">
+      <div className="h-full w-full flex items-center justify-center">
         <div className="text-center p-8">
           <div className="text-red-500 text-6xl mb-4">⚠️</div>
           <h2 className="text-2xl  text-gray-800 mb-2">Error</h2>
@@ -90,7 +90,7 @@ export default function Memotest({ juegoId, onBack }: MemotestProps) {
 
   if (state === 'presentation' && memotestConfig) {
     return (
-      <div className="h-full w-full bg-white">
+      <div className="h-full w-full">
         <MemotestPresentation 
           memotestConfig={memotestConfig}
           onStart={handleStart}
@@ -102,7 +102,7 @@ export default function Memotest({ juegoId, onBack }: MemotestProps) {
 
   if (state === 'playing' && memotestConfig) {
     return (
-      <div className="h-full w-full bg-white">
+      <div className="h-full w-full">
         <MemotestGame 
           memotestConfig={memotestConfig}
           onFinish={handleGameFinish}
@@ -114,7 +114,7 @@ export default function Memotest({ juegoId, onBack }: MemotestProps) {
 
   if (state === 'results' && memotestConfig) {
     return (
-      <div className="h-full w-full bg-white">
+      <div className="h-full w-full">
         <MemotestResults 
           memotestConfig={memotestConfig}
           pairsFound={gameResults.pairsFound}

@@ -150,46 +150,16 @@ export default function MemotestGame({ memotestConfig, onFinish, onBack }: Memot
   // Calcular tamaño del logo basado en cantidad de cartas
   const getLogoSize = () => {
     const cardCount = cards.length;
-    if (cardCount <= 8) return 'w-48 h-48';      // 4x2 = 8 cartas
-    if (cardCount <= 12) return 'w-36 h-36';     // 4x3 = 12 cartas
-    if (cardCount <= 16) return 'w-20 h-20';     // 4x4 = 16 cartas
-    if (cardCount <= 24) return 'w-16 h-16';       // 6x4 = 24 cartas
-    return 'w-6 h-6';                            // Más de 24 cartas
+    if (cardCount <= 8) return 'w-56 h-56';      // 4x2 = 8 cartas
+    if (cardCount <= 12) return 'w-48 h-48';     // 4x3 = 12 cartas
+    if (cardCount <= 16) return 'w-40 h-40';     // 4x4 = 16 cartas
+    if (cardCount <= 24) return 'w-32 h-32';       // 6x4 = 24 cartas
+    return 'w-24 h-24';                            // Más de 24 cartas
   };
 
   return (
     <div className="h-full flex flex-col">
-      {/* Header fijo */}
-      <header 
-        className="bg-white p-4 flex items-center justify-center relative"
-      >
-        <button
-          onClick={onBack}
-          className="group absolute left-4 px-6 py-3 bg-gray-100 rounded-xl hover:bg-gray-200 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
-        >
-          <div className="flex items-center gap-3">
-            <div className="w-6 h-6 rounded-full bg-white flex items-center justify-center group-hover:bg-gray-100 transition-all duration-300">
-              <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-            </div>
-            <span className="font-semibold text-sm tracking-wide text-gray-800">Menú</span>
-          </div>
-        </button>
-        
-        {/* Imagen del memotest centrada */}
-        {memotestConfig.company.memotest_logo ? (
-          <img 
-            src={memotestConfig.company.memotest_logo} 
-            alt="Memotest"
-            className="h-16 w-auto"
-          />
-        ) : (
-          <h1 className="text-2xl text-gray-800">Memotest</h1>
-        )}
-      </header>
-
-      {/* Contenido principal */}
+      {/* Contenido principal sin header */}
       <main className="flex-1 p-4 flex flex-col">
         {/* Temporizador circular */}
         <div className="flex justify-center mb-8">
@@ -209,7 +179,7 @@ export default function MemotestGame({ memotestConfig, onFinish, onBack }: Memot
                 cx="50"
                 cy="50"
                 r="45"
-                stroke={isLowTime ? "#ef4444" : "#3b82f6"}
+                stroke={isLowTime ? "#ef4444" : "#22c55e"}
                 strokeWidth="8"
                 fill="none"
                 strokeDasharray={`${2 * Math.PI * 45}`}
@@ -248,7 +218,7 @@ export default function MemotestGame({ memotestConfig, onFinish, onBack }: Memot
                     <div 
                       className="w-full h-full rounded-xl flex items-center justify-center shadow-lg border-2"
                       style={{ 
-                        background: `linear-gradient(135deg, ${memotestConfig.company.color_primario} 0%, ${memotestConfig.company.color_secundario} 100%)`,
+                        background: `white`,
                         borderColor: memotestConfig.company.color_primario
                       }}
                     >

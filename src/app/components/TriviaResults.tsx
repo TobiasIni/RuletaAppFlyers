@@ -50,21 +50,21 @@ export default function TriviaResults({ triviaConfig, score, total, onPlayAgain,
 
   const getResultMessage = () => {
     if (isPerfect) return "¡GANASTE!";
-    return "¡PERDISTE!";
+    return "¡GRACIAS POR PARTICIPAR!";
   };
 
   const getResultColor = () => {
-    if (isPerfect) return "text-[#8ecc4f]";
-    return "text-[#ff288d]";
+    if (isPerfect) return "text-white";
+    return "text-white";
   };
 
   return (
     <div className="h-full flex flex-col">
       {/* Contenido principal sin header */}
-      <main className="flex-1 flex p-8 pt-4">
-        <div className="text-center max-w-4xl w-full flex flex-col items-center justify-start">
+      <main className="flex-1 flex items-center justify-center p-8">
+        <div className="text-center max-w-4xl w-full flex flex-col items-center justify-center">
           {/* Logo de la empresa en grande */}
-          {triviaConfig.company.logo && (
+          {/* {triviaConfig.company.logo && (
             <div className="mb-12 mt-4">
               <img 
                 src={triviaConfig.company.logo} 
@@ -72,27 +72,26 @@ export default function TriviaResults({ triviaConfig, score, total, onPlayAgain,
                 className="h-64 w-auto mx-auto"
               />
             </div>
-          )}
+          )} */}
 
           {/* Mensaje de resultado */}
           <div className="mb-10">
           
-            <h2 className={`text-9xl mb-6 ${getResultColor()}`}>
+            <h2 className={`text-9xl mb-48 ${getResultColor()}`}>
               {getResultMessage()}
             </h2>
           </div>
 
           {/* Puntuación */}
-          <div 
+          {/* <div 
             className="bg-white rounded-2xl shadow-2xl p-12 mb-12 max-w-3xl w-full"
             style={{ border: `4px solid ${triviaConfig.company.color_primario}` }}
           >
             <h3 className="text-3xl text-gray-800 mb-6">Tu Puntuación</h3>
             
-            {/* Círculo de progreso */}
             <div className="relative w-40 h-40 mx-auto mb-8">
               <svg className="w-40 h-40 transform -rotate-90" viewBox="0 0 100 100">
-                {/* Fondo del círculo */}
+               
                 <circle
                   cx="50"
                   cy="50"
@@ -101,7 +100,7 @@ export default function TriviaResults({ triviaConfig, score, total, onPlayAgain,
                   strokeWidth="8"
                   fill="none"
                 />
-                {/* Círculo de progreso */}
+               
                 <circle
                   cx="50"
                   cy="50"
@@ -123,25 +122,55 @@ export default function TriviaResults({ triviaConfig, score, total, onPlayAgain,
               </div>
             </div>
 
-            {/* Porcentaje */}
+          
             <div className="text-5xl mb-3" style={{ color: triviaConfig.company.color_primario }}>
               {percentage}%
             </div>
             <p className="text-gray-600 text-xl">
               {score} respuesta{score !== 1 ? 's' : ''} correcta{score !== 1 ? 's' : ''} de {total} pregunta{total !== 1 ? 's' : ''}
             </p>
-          </div>
+          </div> */}
+
+          <p className="text-white text-5xl mb-48">
+                        {score} respuesta{score !== 1 ? 's' : ''} correcta{score !== 1 ? 's' : ''} de {total} pregunta{total !== 1 ? 's' : ''}
+                      </p>
 
           {/* Botones de acción */}
           <div className="flex flex-col sm:flex-row gap-6 justify-center mt-8">
             <button
               onClick={onPlayAgain}
-              className="px-24 py-10 text-white text-5xl rounded-2xl hover:scale-105 transition-all duration-300 shadow-xl hover:shadow-2xl"
+              className="relative px-24 py-10 text-white text-5xl rounded-2xl hover:scale-105 transition-all duration-500 shadow-xl hover:shadow-2xl overflow-hidden group"
               style={{
-                background: `linear-gradient(135deg, ${triviaConfig.company.color_primario} 0%, ${triviaConfig.company.color_secundario} 100%)`
+                background: `transparent`,
+                backdropFilter: 'blur(10px)',
+                border: '2px solid rgba(255, 255, 255, 0.2)',
+                boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.37), inset 0 0 20px rgba(255, 255, 255, 0.1)'
               }}
             >
-              Jugar de Nuevo
+              {/* Efecto de brillo líquido */}
+              <div 
+                className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                style={{
+                  background: `radial-gradient(circle at center, rgba(255, 255, 255, 0.3) 0%, transparent 70%)`,
+                  animation: 'liquidMove 3s ease-in-out infinite'
+                }}
+              />
+              {/* Reflejo superior */}
+              <div 
+                className="absolute top-0 left-0 right-0 h-1/3 opacity-30"
+                style={{
+                  background: 'linear-gradient(180deg, rgba(255, 255, 255, 0.4) 0%, transparent 100%)',
+                  borderRadius: '1rem 1rem 0 0'
+                }}
+              />
+              <span className="relative z-10">Jugar de Nuevo</span>
+              <style jsx>{`
+                @keyframes liquidMove {
+                  0%, 100% { transform: translate(0%, 0%) scale(1); }
+                  33% { transform: translate(30%, -30%) scale(1.2); }
+                  66% { transform: translate(-30%, 30%) scale(1.1); }
+                }
+              `}</style>
             </button>
             
             <button

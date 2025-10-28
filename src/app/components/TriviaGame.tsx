@@ -153,18 +153,34 @@ export default function TriviaGame({ triviaConfig, onFinish, onBack }: TriviaGam
 
   const getAnswerStyle = (answer: string) => {
     if (gameState !== 'answered' && gameState !== 'timeout') {
-      return 'bg-white border-gray-800 text-black hover:scale-105 hover:shadow-lg';
+      return 'border-gray-800 hover:scale-105 hover:shadow-lg';
     }
     
     if (isCorrectAnswer(answer)) {
-      return 'bg-[#8ecc4f] text-white border-green-600';
+      return 'text-white border-green-600';
     }
     
     if (isSelectedAnswer(answer) && !isCorrectAnswer(answer)) {
-      return 'bg-[#c7232b] text-white border-red-600';
+      return 'text-white border-red-600';
     }
     
-    return 'bg-white border-gray-800 text-black';
+    return 'border-gray-800';
+  };
+
+  const getAnswerBackground = (answer: string) => {
+    if (gameState !== 'answered' && gameState !== 'timeout') {
+      return 'rgba(255, 255, 255, 0.1)';
+    }
+    
+    if (isCorrectAnswer(answer)) {
+      return 'rgba(142, 204, 79, 0.8)'; // Verde con transparencia
+    }
+    
+    if (isSelectedAnswer(answer) && !isCorrectAnswer(answer)) {
+      return 'rgba(199, 35, 43, 0.8)'; // Rojo con transparencia
+    }
+    
+    return 'rgba(255, 255, 255, 0.1)';
   };
 
   const progressPercentage = (timeLeft / 20) * 100;
@@ -235,7 +251,7 @@ export default function TriviaGame({ triviaConfig, onFinish, onBack }: TriviaGam
 
             {/* Pregunta */}
             <div className="text-center mb-12">
-              <h2 className="text-6xl text-white font-bold mb-4">
+              <h2 className="text-6xl text-white font-bold mb-4 " style={{ letterSpacing: '0.05em' }}>
                 {currentQuestion?.pregunta || 'Pregunta no disponible'}
               </h2>
               {currentQuestion?.pregunta_imagen && (
@@ -263,17 +279,38 @@ export default function TriviaGame({ triviaConfig, onFinish, onBack }: TriviaGam
                       onClick={() => handleAnswer(letter)}
                       disabled={gameState !== 'question'}
                       className={`
-                        p-10 rounded-2xl border-4 shadow-lg transition-all duration-300 text-left flex-1 w-full
+                        relative p-10 rounded-2xl border-4 shadow-lg transition-all duration-500 text-left flex-1 w-full overflow-hidden group
                         ${getAnswerStyle(letter)}
-                        ${gameState === 'question' ? 'cursor-pointer' : 'cursor-not-allowed'}
+                        ${gameState === 'question' ? 'cursor-pointer hover:scale-[1.02]' : 'cursor-not-allowed'}
                         animate-slideUp
                       `}
                       style={{
+                        color: 'white',
+                        background: getAnswerBackground(letter),
                         animationDelay: `${index * 100}ms`,
-                        animationFillMode: 'backwards'
+                        animationFillMode: 'backwards',
+                        backdropFilter: 'blur(10px)',
+                        borderColor: 'rgba(255, 255, 255, 0.3)',
+                        boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.2), inset 0 0 15px rgba(255, 255, 255, 0.1)'
                       }}
                     >
-                      <div className="flex items-center gap-8 h-full">
+                      {/* Efecto de brillo líquido */}
+                      <div 
+                        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                        style={{
+                          background: `radial-gradient(circle at center, rgba(255, 255, 255, 0.2) 0%, transparent 70%)`,
+                          animation: 'liquidMove 3s ease-in-out infinite'
+                        }}
+                      />
+                      {/* Reflejo superior */}
+                      <div 
+                        className="absolute top-0 left-0 right-0 h-1/3 opacity-20 pointer-events-none"
+                        style={{
+                          background: 'linear-gradient(180deg, rgba(255, 255, 255, 0.4) 0%, transparent 100%)',
+                          borderRadius: '1rem 1rem 0 0'
+                        }}
+                      />
+                      <div className="flex items-center gap-8 h-full relative z-10">
                         {optionImage ? (
                           <div className="flex items-center justify-center w-36 h-36 flex-shrink-0">
                             <img 
@@ -284,7 +321,7 @@ export default function TriviaGame({ triviaConfig, onFinish, onBack }: TriviaGam
                           </div>
                         ) : (
                           <div className={`
-                            flex items-center justify-center text-8xl flex-shrink-0 w-24
+                            flex items-center justify-center 
                             ${gameState === 'question' 
                               ? 'text-blue-500' 
                               : isCorrect 
@@ -294,11 +331,10 @@ export default function TriviaGame({ triviaConfig, onFinish, onBack }: TriviaGam
                                   : 'text-gray-800'
                             }
                           `}>
-                            {letter}
                           </div>
                         )}
                         <div className="flex-1 flex items-center">
-                          <p className="text-3xl font-medium">{option}</p>
+                          <p className="text-6xl font-medium">{option}</p>
                         </div>
                         {gameState === 'answered' && isCorrect && (
                           <div className="text-white text-4xl flex-shrink-0">✓</div>
@@ -307,6 +343,13 @@ export default function TriviaGame({ triviaConfig, onFinish, onBack }: TriviaGam
                           <div className="text-white text-4xl flex-shrink-0">✗</div>
                         )}
                       </div>
+                      <style jsx>{`
+                        @keyframes liquidMove {
+                          0%, 100% { transform: translate(0%, 0%) scale(1); }
+                          33% { transform: translate(30%, -30%) scale(1.2); }
+                          66% { transform: translate(-30%, 30%) scale(1.1); }
+                        }
+                      `}</style>
                     </button>
                   );
                 })}
