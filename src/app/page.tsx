@@ -114,7 +114,7 @@ export default function Home() {
         }}
       >
       
-        <h1 className="text-6xl font-extrabold mb-2">SELECCIONA UN JUEGO</h1>
+        <h1 className="text-8xl font-extrabold mb-2">SELECCIONA UN JUEGO</h1>
       </header>
 
       {/* Games Grid */}
@@ -135,17 +135,39 @@ export default function Home() {
                 onClick={() => handleGameSelect(game)}
                 disabled={clickedGameId !== null}
                 style={{ 
-                  height: `calc((100% - ${(3 - 1) * 1.5}rem) / 3)`
+                  height: `calc((100% - ${(3 - 1) * 1.5}rem) / 3)`,
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  backdropFilter: 'blur(10px)',
+                  border: '4px solid rgba(255, 255, 255, 0.3)',
+                  boxShadow: clickedGameId === game.id 
+                    ? '0 10px 32px 0 rgba(0, 0, 0, 0.4), inset 0 0 20px rgba(255, 255, 255, 0.15)'
+                    : '0 8px 32px 0 rgba(0, 0, 0, 0.3), inset 0 0 20px rgba(255, 255, 255, 0.1)'
                 }}
-                className={`bg-white rounded-2xl transition-all duration-300 ease-out transform p-4 border-6 border-gray-800 backdrop-blur-sm flex flex-col w-full
+                className={`relative rounded-2xl transition-all duration-500 ease-out transform p-4 flex flex-col w-full overflow-hidden group
                   ${clickedGameId === game.id 
-                    ? 'scale-105 shadow-[0_10px_0_0_rgba(0,0,0,0.25)] -translate-y-1' 
+                    ? 'scale-105 -translate-y-1' 
                     : clickedGameId !== null
                     ? 'opacity-60 scale-98'
-                    : 'shadow-[0_8px_0_0_rgba(0,0,0,0.2)] hover:shadow-[0_4px_0_0_rgba(0,0,0,0.2)] active:shadow-[0_2px_0_0_rgba(0,0,0,0.2)] hover:-translate-y-1 active:translate-y-1'
+                    : 'hover:-translate-y-1 active:translate-y-1 hover:scale-[1.02]'
                   }`}
               >
-                <div className="w-full h-full rounded-lg flex items-center justify-center overflow-hidden">
+                {/* Efecto de brillo líquido */}
+                <div 
+                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                  style={{
+                    background: `radial-gradient(circle at center, rgba(255, 255, 255, 0.2) 0%, transparent 70%)`,
+                    animation: 'liquidMove 3s ease-in-out infinite'
+                  }}
+                />
+                {/* Reflejo superior */}
+                <div 
+                  className="absolute top-0 left-0 right-0 h-1/3 opacity-20 pointer-events-none"
+                  style={{
+                    background: 'linear-gradient(180deg, rgba(255, 255, 255, 0.4) 0%, transparent 100%)',
+                    borderRadius: '1rem 1rem 0 0'
+                  }}
+                />
+                <div className="w-full h-full rounded-lg flex items-center justify-center overflow-hidden relative z-10">
                   <img 
                     src={getGameImage(game.tipo)} 
                     alt={`Imagen de ${game.nombre}`}
@@ -163,6 +185,13 @@ export default function Home() {
                   />
                   <div className="text-white text-4xl hidden">🎮</div>
                 </div>
+                <style jsx>{`
+                  @keyframes liquidMove {
+                    0%, 100% { transform: translate(0%, 0%) scale(1); }
+                    33% { transform: translate(30%, -30%) scale(1.2); }
+                    66% { transform: translate(-30%, 30%) scale(1.1); }
+                  }
+                `}</style>
               </button>
             ))}
           </div>

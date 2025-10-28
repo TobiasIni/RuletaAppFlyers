@@ -245,11 +245,11 @@ export default function MemotestGame({ memotestConfig, onFinish, onBack }: Memot
                         className="w-full h-full object-contain p-2"
                       />
                       {card.isMatched && (
-                        <div className="absolute inset-0 flex items-center justify-center bg-[#8ecc4f] bg-opacity-80 border-2 border-[#004c40] rounded-xl">
+                        <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-80 border-2 border-[#004c40] rounded-xl">
                           <img 
                             src="/tick.png" 
                             alt="Correcto"
-                            className="w-16 h-16 object-contain"
+                            className="w-24 h-24 object-contain"
                           />
                         </div>
                       )}
