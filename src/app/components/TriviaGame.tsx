@@ -12,20 +12,24 @@ interface TriviaGameProps {
 type GameState = 'question' | 'timeout' | 'answered';
 
 export default function TriviaGame({ triviaConfig, onFinish, onBack }: TriviaGameProps) {
-  // Seleccionar preguntas aleatorias si hay cantidad_preguntas definida
+  // Mezclar preguntas una sola vez al montar el componente
   const selectedQuestions = useMemo(() => {
     const allQuestions = triviaConfig.questions;
     const cantidadPreguntas = triviaConfig.trivia.cantidad_preguntas;
-    
-    if (cantidadPreguntas && cantidadPreguntas < allQuestions.length) {
-      // Crear una copia del array y mezclarla
-      const shuffled = [...allQuestions].sort(() => Math.random() - 0.5);
-      // Tomar solo la cantidad solicitada
+
+    const shuffled = [...allQuestions];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+
+    if (cantidadPreguntas && cantidadPreguntas > 0 && cantidadPreguntas <= shuffled.length) {
       return shuffled.slice(0, cantidadPreguntas);
     }
-    
-    return allQuestions;
-  }, [triviaConfig]);
+
+    return shuffled;
+  // Dependencias vacías para que no se remezcle durante la partida
+  }, []);
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [timeLeft, setTimeLeft] = useState(20);
@@ -68,9 +72,15 @@ export default function TriviaGame({ triviaConfig, onFinish, onBack }: TriviaGam
     
     setTimeout(() => {
       setShowTimeout(false);
-      nextQuestion();
+      // Verificar que no estamos en la última pregunta antes de continuar
+      if (currentQuestionIndex < selectedQuestions.length - 1) {
+        setCurrentQuestionIndex(prev => prev + 1);
+        setGameState('question');
+      } else {
+        onFinish(score, selectedQuestions.length);
+      }
     }, 2000);
-  }, [currentQuestionIndex, isLastQuestion]);
+  }, [currentQuestionIndex, selectedQuestions.length, score, onFinish]);
 
   const handleAnswer = (answer: string) => {
     if (gameState !== 'question') return;
@@ -112,6 +122,7 @@ export default function TriviaGame({ triviaConfig, onFinish, onBack }: TriviaGam
   };
 
   const getOptionText = (index: number) => {
+    if (!currentQuestion) return '';
     const options = [
       currentQuestion.opcion_a,
       currentQuestion.opcion_b,
@@ -122,6 +133,7 @@ export default function TriviaGame({ triviaConfig, onFinish, onBack }: TriviaGam
   };
 
   const getOptionImage = (index: number) => {
+    if (!currentQuestion) return null;
     const images = [
       currentQuestion.opcion_a_imagen,
       currentQuestion.opcion_b_imagen,
@@ -132,7 +144,7 @@ export default function TriviaGame({ triviaConfig, onFinish, onBack }: TriviaGam
   };
 
   const isCorrectAnswer = (answer: string) => {
-    return answer === currentQuestion.respuesta_correcta;
+    return currentQuestion ? answer === currentQuestion.respuesta_correcta : false;
   };
 
   const isSelectedAnswer = (answer: string) => {
@@ -158,41 +170,20 @@ export default function TriviaGame({ triviaConfig, onFinish, onBack }: TriviaGam
   const progressPercentage = (timeLeft / 20) * 100;
   const isLowTime = timeLeft <= 5;
 
+  // Validar que existe la pregunta actual después de todos los hooks
+  if (!currentQuestion) {
+    return (
+      <div className="h-full flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-2xl text-white">Error: No se encontró la pregunta</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="h-full flex flex-col">
-      {/* Header fijo */}
-      <header 
-        className="bg-white p-4 flex items-center justify-center relative"
-      >
-        <button
-          onClick={onBack}
-          className="group absolute left-4 px-6 py-3 bg-gray-100 rounded-xl hover:bg-gray-200 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
-        >
-          <div className="flex items-center gap-3">
-            <div className="w-6 h-6 rounded-full bg-white flex items-center justify-center group-hover:bg-gray-100 transition-all duration-300">
-              <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-            </div>
-            <span className="font-semibold text-sm tracking-wide text-gray-800">Menú</span>
-          </div>
-        </button>
-        
-        {/* Imagen de la trivia centrada */}
-        {triviaConfig.company.trivia_logo ? (
-          <img 
-            src={triviaConfig.company.trivia_logo} 
-            alt="Trivia"
-            className="h-16 w-auto"
-          />
-        ) : (
-          <h1 className="text-2xl  text-gray-800">Trivia</h1>
-        )}
-        
-        
-      </header>
-
-      {/* Contenido principal */}
+      {/* Contenido principal sin header */}
       <main className="flex-1 p-8 flex flex-col">
         {showTimeout ? (
           <div className="flex items-center justify-center h-full">
@@ -207,10 +198,10 @@ export default function TriviaGame({ triviaConfig, onFinish, onBack }: TriviaGam
           </div>
         ) : (
           <div className="max-w-4xl mx-auto flex flex-col flex-1 w-full">
-            {/* Temporizador circular */}
+            {/* Temporizador circular (más grande) */}
             <div className="flex justify-center mb-8">
-              <div className="relative w-24 h-24">
-                <svg className="w-24 h-24 transform -rotate-90" viewBox="0 0 100 100">
+              <div className="relative w-40 h-40">
+                <svg className="w-40 h-40 transform -rotate-90" viewBox="0 0 100 100">
                   {/* Fondo del círculo */}
                   <circle
                     cx="50"
@@ -225,7 +216,7 @@ export default function TriviaGame({ triviaConfig, onFinish, onBack }: TriviaGam
                     cx="50"
                     cy="50"
                     r="45"
-                    stroke={isLowTime ? "#ef4444" : "#3b82f6"}
+                    stroke={isLowTime ? "#ef4444" : "#22c55e"}
                     strokeWidth="8"
                     fill="none"
                     strokeDasharray={`${2 * Math.PI * 45}`}
@@ -236,7 +227,7 @@ export default function TriviaGame({ triviaConfig, onFinish, onBack }: TriviaGam
                     }}
                   />
                 </svg>
-                <div className={`absolute inset-0 flex items-center justify-center text-2xl  ${isLowTime ? 'text-red-600 animate-pulse' : 'text-gray-700'}`}>
+                <div className={`absolute inset-0 flex items-center justify-center text-5xl ${isLowTime ? 'text-red-600 animate-pulse' : 'text-white'}`}>
                   {timeLeft}
                 </div>
               </div>
@@ -244,10 +235,10 @@ export default function TriviaGame({ triviaConfig, onFinish, onBack }: TriviaGam
 
             {/* Pregunta */}
             <div className="text-center mb-12">
-              <h2 className="text-3xl  text-gray-800 mb-4">
-                {currentQuestion.pregunta}
+              <h2 className="text-6xl text-white font-bold mb-4">
+                {currentQuestion?.pregunta || 'Pregunta no disponible'}
               </h2>
-              {currentQuestion.pregunta_imagen && (
+              {currentQuestion?.pregunta_imagen && (
                 <img 
                   src={currentQuestion.pregunta_imagen} 
                   alt="Imagen de la pregunta"
@@ -258,7 +249,7 @@ export default function TriviaGame({ triviaConfig, onFinish, onBack }: TriviaGam
 
             {/* Opciones de respuesta */}
             <div className="flex flex-col gap-10 flex-1">
-              {[currentQuestion.opcion_a, currentQuestion.opcion_b, currentQuestion.opcion_c, currentQuestion.opcion_d]
+              {currentQuestion && [currentQuestion.opcion_a, currentQuestion.opcion_b, currentQuestion.opcion_c, currentQuestion.opcion_d]
                 .filter(Boolean)
                 .map((option, index) => {
                   const letter = getOptionLetter(index);

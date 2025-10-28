@@ -49,48 +49,18 @@ export default function TriviaResults({ triviaConfig, score, total, onPlayAgain,
   }, [isPerfect]);
 
   const getResultMessage = () => {
-    if (isPerfect) return "¡Perfecto! 🎉";
-    return "¡Perdiste!";
+    if (isPerfect) return "¡GANASTE!";
+    return "¡PERDISTE!";
   };
 
   const getResultColor = () => {
-    if (isPerfect) return "text-green-600";
-    return "text-red-600";
+    if (isPerfect) return "text-[#8ecc4f]";
+    return "text-[#ff288d]";
   };
 
   return (
     <div className="h-full flex flex-col">
-      {/* Header fijo */}
-      <header 
-        className="bg-white p-4 flex items-center justify-center relative"
-      >
-        <button
-          onClick={onBack}
-          className="group absolute left-4 px-6 py-3 bg-gray-100 rounded-xl hover:bg-gray-200 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
-        >
-          <div className="flex items-center gap-3">
-            <div className="w-6 h-6 rounded-full bg-white flex items-center justify-center group-hover:bg-gray-100 transition-all duration-300">
-              <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-            </div>
-            <span className="font-semibold text-sm tracking-wide text-gray-800">Menú</span>
-          </div>
-        </button>
-        
-        {/* Imagen de la trivia centrada */}
-        {triviaConfig.company.trivia_logo ? (
-          <img 
-            src={triviaConfig.company.trivia_logo} 
-            alt="Trivia"
-            className="h-16 w-auto"
-          />
-        ) : (
-          <h1 className="text-2xl text-gray-800">Resultados</h1>
-        )}
-      </header>
-
-      {/* Contenido principal */}
+      {/* Contenido principal sin header */}
       <main className="flex-1 flex p-8 pt-4">
         <div className="text-center max-w-4xl w-full flex flex-col items-center justify-start">
           {/* Logo de la empresa en grande */}
@@ -107,7 +77,7 @@ export default function TriviaResults({ triviaConfig, score, total, onPlayAgain,
           {/* Mensaje de resultado */}
           <div className="mb-10">
           
-            <h2 className={`text-5xl mb-6 ${getResultColor()}`}>
+            <h2 className={`text-9xl mb-6 ${getResultColor()}`}>
               {getResultMessage()}
             </h2>
           </div>
@@ -166,7 +136,7 @@ export default function TriviaResults({ triviaConfig, score, total, onPlayAgain,
           <div className="flex flex-col sm:flex-row gap-6 justify-center mt-8">
             <button
               onClick={onPlayAgain}
-              className="px-16 py-6 text-white text-3xl rounded-2xl hover:scale-105 transition-all duration-300 shadow-xl hover:shadow-2xl"
+              className="px-24 py-10 text-white text-5xl rounded-2xl hover:scale-105 transition-all duration-300 shadow-xl hover:shadow-2xl"
               style={{
                 background: `linear-gradient(135deg, ${triviaConfig.company.color_primario} 0%, ${triviaConfig.company.color_secundario} 100%)`
               }}
@@ -176,7 +146,7 @@ export default function TriviaResults({ triviaConfig, score, total, onPlayAgain,
             
             <button
               onClick={onBack}
-              className="px-16 py-6 bg-gray-600 text-white text-3xl rounded-2xl hover:bg-gray-700 hover:scale-105 transition-all duration-300 shadow-xl hover:shadow-2xl"
+              className="px-24 py-10 bg-gray-600 text-white text-5xl rounded-2xl hover:bg-gray-700 hover:scale-105 transition-all duration-300 shadow-xl hover:shadow-2xl"
             >
               Volver al Menú
             </button>

@@ -48,7 +48,8 @@ export default function Trivia({ juegoId, onBack }: TriviaProps) {
   };
 
   const handlePlayAgain = () => {
-    setState('playing');
+    // Volver a la pantalla de presentación
+    setState('presentation');
   };
 
   const handleBack = () => {
@@ -57,7 +58,7 @@ export default function Trivia({ juegoId, onBack }: TriviaProps) {
 
   if (state === 'loading') {
     return (
-      <div className="h-full w-full flex items-center justify-center bg-white">
+      <div className="h-full w-full flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-4"></div>
           <p className="text-xl text-gray-600">Cargando trivia...</p>
@@ -68,7 +69,7 @@ export default function Trivia({ juegoId, onBack }: TriviaProps) {
 
   if (error && !triviaConfig) {
     return (
-      <div className="h-full w-full flex items-center justify-center bg-white">
+      <div className="h-full w-full flex items-center justify-center">
         <div className="text-center p-8">
           <div className="text-red-500 text-6xl mb-4">⚠️</div>
           <h2 className="text-2xl  text-gray-800 mb-2">Error</h2>
@@ -86,7 +87,7 @@ export default function Trivia({ juegoId, onBack }: TriviaProps) {
 
   if (state === 'presentation' && triviaConfig) {
     return (
-      <div className="h-full w-full bg-white">
+      <div className="h-full w-full">
         <TriviaPresentation 
           triviaConfig={triviaConfig}
           onStart={handleStart}
@@ -98,7 +99,7 @@ export default function Trivia({ juegoId, onBack }: TriviaProps) {
 
   if (state === 'playing' && triviaConfig) {
     return (
-      <div className="h-full w-full bg-white">
+      <div className="h-full w-full">
         <TriviaGame 
           triviaConfig={triviaConfig}
           onFinish={handleGameFinish}
@@ -110,7 +111,7 @@ export default function Trivia({ juegoId, onBack }: TriviaProps) {
 
   if (state === 'results' && triviaConfig) {
     return (
-      <div className="h-full w-full bg-white">
+      <div className="h-full w-full">
         <TriviaResults 
           triviaConfig={triviaConfig}
           score={gameScore.score}
