@@ -227,12 +227,16 @@ export default function MemotestGame({ memotestConfig, onFinish, onBack }: Memot
         </div>
 
         {/* Grid de cartas */}
-        <div className={`grid ${getGridCols()} gap-2 w-full flex-1`}>
+        <div className={`grid ${getGridCols()} gap-4 w-full flex-1`}>
           {cards.map((card, index) => (
             <div
               key={card.uniqueId}
-              className="w-full h-full cursor-pointer"
+              className="w-full h-full cursor-pointer animate-shuffleIn"
               onClick={() => handleCardClick(index)}
+              style={{
+                animationDelay: `${index * 50}ms`,
+                animationFillMode: 'backwards'
+              }}
             >
               <div className="relative w-full h-full">
                 {/* Carta */}
@@ -260,8 +264,10 @@ export default function MemotestGame({ memotestConfig, onFinish, onBack }: Memot
 
                   {/* Frente (imagen de la carta) */}
                   <div className="absolute inset-0 w-full h-full backface-hidden rotate-y-180">
-                    <div className={`w-full h-full rounded-xl shadow-lg border-2 overflow-hidden ${
-                      card.isMatched ? 'ring-4 ring-green-500 bg-green-100' : 'bg-white'
+                    <div className={`w-full h-full rounded-xl shadow-lg border-4 overflow-hidden ${
+                      card.isMatched 
+                        ? 'bg-[#8ecc4f] border-[#004c40]' 
+                        : 'bg-white border-gray-300'
                     }`}>
                       <img 
                         src={card.imagen} 
@@ -269,8 +275,12 @@ export default function MemotestGame({ memotestConfig, onFinish, onBack }: Memot
                         className="w-full h-full object-contain p-2"
                       />
                       {card.isMatched && (
-                        <div className="absolute inset-0 flex items-center justify-center bg-green-500 bg-opacity-80">
-                          <div className="text-white text-4xl">✓</div>
+                        <div className="absolute inset-0 flex items-center justify-center bg-[#8ecc4f] bg-opacity-80 border-2 border-[#004c40] rounded-xl">
+                          <img 
+                            src="/tick.png" 
+                            alt="Correcto"
+                            className="w-16 h-16 object-contain"
+                          />
                         </div>
                       )}
                     </div>

@@ -1,6 +1,8 @@
 'use client';
 
+import { useEffect } from 'react';
 import { MemotestConfig } from '@/types/api';
+import confetti from 'canvas-confetti';
 
 interface MemotestResultsProps {
   memotestConfig: MemotestConfig;
@@ -24,6 +26,38 @@ export default function MemotestResults({
   const isWin = pairsFound === totalPairs;
   const isTimeUp = timeUsed >= gameTime;
   const percentage = Math.round((pairsFound / totalPairs) * 100);
+
+  // Lanzar confetti si ganó
+  useEffect(() => {
+    if (isWin) {
+      // Confetti inicial
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 }
+      });
+
+      // Más confetti después de 200ms
+      setTimeout(() => {
+        confetti({
+          particleCount: 50,
+          angle: 60,
+          spread: 55,
+          origin: { x: 0 }
+        });
+      }, 200);
+
+      // Más confetti después de 400ms
+      setTimeout(() => {
+        confetti({
+          particleCount: 50,
+          angle: 120,
+          spread: 55,
+          origin: { x: 1 }
+        });
+      }, 400);
+    }
+  }, [isWin]);
 
   const getResultMessage = () => {
     if (isWin) return "¡Ganaste! 🎉";

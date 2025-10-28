@@ -1,6 +1,8 @@
 'use client';
 
+import { useEffect } from 'react';
 import { TriviaConfig } from '@/types/api';
+import confetti from 'canvas-confetti';
 
 interface TriviaResultsProps {
   triviaConfig: TriviaConfig;
@@ -13,20 +15,46 @@ interface TriviaResultsProps {
 export default function TriviaResults({ triviaConfig, score, total, onPlayAgain, onBack }: TriviaResultsProps) {
   const percentage = Math.round((score / total) * 100);
   const isPerfect = score === total;
-  const isGood = percentage >= 70;
-  const isPassing = percentage >= 50;
+
+  // Lanzar confetti si ganó
+  useEffect(() => {
+    if (isPerfect) {
+      // Confetti inicial
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 }
+      });
+
+      // Más confetti después de 200ms
+      setTimeout(() => {
+        confetti({
+          particleCount: 50,
+          angle: 60,
+          spread: 55,
+          origin: { x: 0 }
+        });
+      }, 200);
+
+      // Más confetti después de 400ms
+      setTimeout(() => {
+        confetti({
+          particleCount: 50,
+          angle: 120,
+          spread: 55,
+          origin: { x: 1 }
+        });
+      }, 400);
+    }
+  }, [isPerfect]);
 
   const getResultMessage = () => {
     if (isPerfect) return "¡Perfecto! 🎉";
-    if (isGood) return "¡Excelente! 👏";
-    if (isPassing) return "¡Bien hecho! 👍";
     return "¡Perdiste!";
   };
 
   const getResultColor = () => {
     if (isPerfect) return "text-green-600";
-    if (isGood) return "text-blue-600";
-    if (isPassing) return "text-yellow-600";
     return "text-red-600";
   };
 

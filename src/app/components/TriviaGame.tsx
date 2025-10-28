@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { TriviaConfig, TriviaQuestion } from '@/types/api';
 
 interface TriviaGameProps {
@@ -12,6 +12,21 @@ interface TriviaGameProps {
 type GameState = 'question' | 'timeout' | 'answered';
 
 export default function TriviaGame({ triviaConfig, onFinish, onBack }: TriviaGameProps) {
+  // Seleccionar preguntas aleatorias si hay cantidad_preguntas definida
+  const selectedQuestions = useMemo(() => {
+    const allQuestions = triviaConfig.questions;
+    const cantidadPreguntas = triviaConfig.trivia.cantidad_preguntas;
+    
+    if (cantidadPreguntas && cantidadPreguntas < allQuestions.length) {
+      // Crear una copia del array y mezclarla
+      const shuffled = [...allQuestions].sort(() => Math.random() - 0.5);
+      // Tomar solo la cantidad solicitada
+      return shuffled.slice(0, cantidadPreguntas);
+    }
+    
+    return allQuestions;
+  }, [triviaConfig]);
+
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [timeLeft, setTimeLeft] = useState(20);
   const [gameState, setGameState] = useState<GameState>('question');
@@ -19,8 +34,8 @@ export default function TriviaGame({ triviaConfig, onFinish, onBack }: TriviaGam
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [showTimeout, setShowTimeout] = useState(false);
 
-  const currentQuestion = triviaConfig.questions[currentQuestionIndex];
-  const isLastQuestion = currentQuestionIndex === triviaConfig.questions.length - 1;
+  const currentQuestion = selectedQuestions[currentQuestionIndex];
+  const isLastQuestion = currentQuestionIndex === selectedQuestions.length - 1;
 
   // Temporizador
   useEffect(() => {
@@ -63,20 +78,29 @@ export default function TriviaGame({ triviaConfig, onFinish, onBack }: TriviaGam
     setSelectedAnswer(answer);
     setGameState('answered');
     
-    // Verificar si es correcta
-    if (answer === currentQuestion.respuesta_correcta) {
-      setScore(prev => prev + 1);
+    // Verificar si es correcta - comparar la letra con respuesta_correcta
+    const isCorrect = answer === currentQuestion.respuesta_correcta;
+    
+    let newScore = score;
+    if (isCorrect) {
+      newScore = score + 1;
+      setScore(newScore);
     }
 
     // Mostrar resultado por 2 segundos antes de continuar
     setTimeout(() => {
-      nextQuestion();
+      if (isLastQuestion) {
+        onFinish(newScore, selectedQuestions.length);
+      } else {
+        setCurrentQuestionIndex(prev => prev + 1);
+        setGameState('question');
+      }
     }, 2000);
   };
 
   const nextQuestion = () => {
     if (isLastQuestion) {
-      onFinish(score, triviaConfig.questions.length);
+      onFinish(score, selectedQuestions.length);
     } else {
       setCurrentQuestionIndex(prev => prev + 1);
       setGameState('question');
@@ -97,6 +121,16 @@ export default function TriviaGame({ triviaConfig, onFinish, onBack }: TriviaGam
     return options[index];
   };
 
+  const getOptionImage = (index: number) => {
+    const images = [
+      currentQuestion.opcion_a_imagen,
+      currentQuestion.opcion_b_imagen,
+      currentQuestion.opcion_c_imagen,
+      currentQuestion.opcion_d_imagen
+    ];
+    return images[index];
+  };
+
   const isCorrectAnswer = (answer: string) => {
     return answer === currentQuestion.respuesta_correcta;
   };
@@ -111,11 +145,11 @@ export default function TriviaGame({ triviaConfig, onFinish, onBack }: TriviaGam
     }
     
     if (isCorrectAnswer(answer)) {
-      return 'bg-green-500 text-white border-green-600';
+      return 'bg-[#8ecc4f] text-white border-green-600';
     }
     
     if (isSelectedAnswer(answer) && !isCorrectAnswer(answer)) {
-      return 'bg-red-500 text-white border-red-600';
+      return 'bg-[#c7232b] text-white border-red-600';
     }
     
     return 'bg-white border-gray-800 text-black';
@@ -159,17 +193,20 @@ export default function TriviaGame({ triviaConfig, onFinish, onBack }: TriviaGam
       </header>
 
       {/* Contenido principal */}
-      <main className="flex-1 p-8">
+      <main className="flex-1 p-8 flex flex-col">
         {showTimeout ? (
           <div className="flex items-center justify-center h-full">
             <div className="text-center">
-              <div className="text-6xl mb-4">⏰</div>
-              <h2 className="text-3xl  text-red-600 mb-4">¡Tiempo agotado!</h2>
-              <p className="text-xl text-gray-600">Pasando a la siguiente pregunta...</p>
+              <img 
+                src="/tiempo.png" 
+                alt="Tiempo agotado"
+                className="w-264 h-264 mx-auto mb-8 object-contain"
+              />
+              <p className="text-2xl text-gray-600">Pasando a la siguiente pregunta...</p>
             </div>
           </div>
         ) : (
-          <div className="max-w-4xl mx-auto">
+          <div className="max-w-4xl mx-auto flex flex-col flex-1 w-full">
             {/* Temporizador circular */}
             <div className="flex justify-center mb-8">
               <div className="relative w-24 h-24">
@@ -206,7 +243,7 @@ export default function TriviaGame({ triviaConfig, onFinish, onBack }: TriviaGam
             </div>
 
             {/* Pregunta */}
-            <div className="text-center mb-8">
+            <div className="text-center mb-12">
               <h2 className="text-3xl  text-gray-800 mb-4">
                 {currentQuestion.pregunta}
               </h2>
@@ -220,47 +257,63 @@ export default function TriviaGame({ triviaConfig, onFinish, onBack }: TriviaGam
             </div>
 
             {/* Opciones de respuesta */}
-            <div className="grid grid-cols-1 gap-8">
+            <div className="flex flex-col gap-10 flex-1">
               {[currentQuestion.opcion_a, currentQuestion.opcion_b, currentQuestion.opcion_c, currentQuestion.opcion_d]
                 .filter(Boolean)
                 .map((option, index) => {
                   const letter = getOptionLetter(index);
                   const isCorrect = isCorrectAnswer(letter);
                   const isSelected = isSelectedAnswer(letter);
+                  const optionImage = getOptionImage(index);
                   
                   return (
                     <button
-                      key={index}
+                      key={`${currentQuestionIndex}-${index}`}
                       onClick={() => handleAnswer(letter)}
                       disabled={gameState !== 'question'}
                       className={`
-                        p-6 rounded-xl border-4 shadow-lg transition-all duration-300 text-left h-40 min-h-40
+                        p-10 rounded-2xl border-4 shadow-lg transition-all duration-300 text-left flex-1 w-full
                         ${getAnswerStyle(letter)}
                         ${gameState === 'question' ? 'cursor-pointer' : 'cursor-not-allowed'}
+                        animate-slideUp
                       `}
+                      style={{
+                        animationDelay: `${index * 100}ms`,
+                        animationFillMode: 'backwards'
+                      }}
                     >
-                      <div className="flex items-center gap-4">
-                        <div className={`
-                          flex items-center justify-center  text-6xl
-                          ${gameState === 'question' 
-                            ? 'text-blue-500' 
-                            : isCorrect 
-                              ? 'text-green-500' 
-                              : isSelected 
-                                ? 'text-red-500'
-                                : 'text-gray-800'
-                          }
-                        `}>
-                          {letter}
-                        </div>
-                        <div className="flex-1">
-                          <p className="text-2xl font-medium">{option}</p>
+                      <div className="flex items-center gap-8 h-full">
+                        {optionImage ? (
+                          <div className="flex items-center justify-center w-36 h-36 flex-shrink-0">
+                            <img 
+                              src={optionImage} 
+                              alt={`Opción ${letter}`}
+                              className="max-w-full max-h-full object-contain rounded-lg"
+                            />
+                          </div>
+                        ) : (
+                          <div className={`
+                            flex items-center justify-center text-8xl flex-shrink-0 w-24
+                            ${gameState === 'question' 
+                              ? 'text-blue-500' 
+                              : isCorrect 
+                                ? 'text-green-500' 
+                                : isSelected 
+                                  ? 'text-red-500'
+                                  : 'text-gray-800'
+                            }
+                          `}>
+                            {letter}
+                          </div>
+                        )}
+                        <div className="flex-1 flex items-center">
+                          <p className="text-3xl font-medium">{option}</p>
                         </div>
                         {gameState === 'answered' && isCorrect && (
-                          <div className="text-green-600 text-2xl">✓</div>
+                          <div className="text-white text-4xl flex-shrink-0">✓</div>
                         )}
                         {gameState === 'answered' && isSelected && !isCorrect && (
-                          <div className="text-red-600 text-2xl">✗</div>
+                          <div className="text-white text-4xl flex-shrink-0">✗</div>
                         )}
                       </div>
                     </button>

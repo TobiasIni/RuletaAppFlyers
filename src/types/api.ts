@@ -64,6 +64,7 @@ export interface TriviaInfo {
   descripcion: string;
   company_id: number;
   activa: boolean;
+  cantidad_preguntas: number | null;
   created_at: string;
   updated_at: string | null;
 }
