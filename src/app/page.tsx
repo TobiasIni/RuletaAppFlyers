@@ -114,7 +114,7 @@ export default function Home() {
         }}
       >
       
-        <h1 className="text-8xl font-extrabold mb-2">SELECCIONA UN JUEGO</h1>
+        <h1 className="text-8xl font-extrabold mb-2">Seleccioná un juego para comenzar</h1>
       </header>
 
       {/* Games Grid */}
@@ -194,7 +194,9 @@ export default function Home() {
                 `}</style>
               </button>
             ))}
+          <p className="text-white text-5xl mt-40" style={{ fontFamily: 'var(--font-montserrat)' }}>#LlegamosLejosParaEstarCerca</p>
           </div>
+
         )}
       </main>
 

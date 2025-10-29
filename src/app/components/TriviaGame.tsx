@@ -18,11 +18,11 @@ export default function TriviaGame({ triviaConfig, onFinish, onBack }: TriviaGam
     const cantidadPreguntas = triviaConfig.trivia.cantidad_preguntas;
 
     const shuffled = [...allQuestions];
-    for (let i = shuffled.length - 1; i > 0; i--) {
+   /*  for (let i = shuffled.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
     }
-
+ */
     if (cantidadPreguntas && cantidadPreguntas > 0 && cantidadPreguntas <= shuffled.length) {
       return shuffled.slice(0, cantidadPreguntas);
     }
