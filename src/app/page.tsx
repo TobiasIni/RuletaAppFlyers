@@ -5,6 +5,7 @@ import { JuegoHabilitado, Company } from '@/types/api';
 import { getCompanyData } from '@/lib/api';
 import Trivia from './components/Trivia';
 import Memotest from './components/Memotest';
+import Ruleta from './components/Ruleta';
 
 export default function Home() {
   const [companyData, setCompanyData] = useState<Company | null>(null);
@@ -101,6 +102,10 @@ export default function Home() {
 
   if (selectedGame?.tipo === 'memotest') {
     return <Memotest juegoId={selectedGame.juego_id} onBack={handleBackToMenu} />;
+  }
+
+  if (selectedGame?.tipo === 'ruleta') {
+    return <Ruleta juegoId={selectedGame.juego_id} onBack={handleBackToMenu} />;
   }
 
   // Si no hay juego seleccionado, mostrar el menú principal

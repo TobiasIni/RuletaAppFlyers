@@ -1,4 +1,4 @@
-import { Company, TriviaConfig, MemotestConfig } from '@/types/api';
+import { Company, TriviaConfig, MemotestConfig, RuletaConfig } from '@/types/api';
 import { getConfig } from '@/config/constants';
 
 export async function getCompanyData(): Promise<Company> {
@@ -93,6 +93,69 @@ export async function getMemotestConfig(memotestId: number): Promise<MemotestCon
     return data;
   } catch (error) {
     console.error('❌ Error al conectar con la API de memotest:', error);
+    throw error;
+  }
+}
+
+export async function getRuletaConfig(ruletaId: number): Promise<RuletaConfig> {
+  const { apiBaseUrl } = getConfig();
+  
+  console.log('🔧 Obteniendo configuración de ruleta:', ruletaId);
+  
+  const url = `${apiBaseUrl}/ruletas/${ruletaId}/config`;
+  console.log('🌐 URL de la API:', url);
+
+  try {
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'accept': 'application/json',
+      },
+    });
+
+    console.log('📡 Respuesta de la API:', response.status, response.statusText);
+
+    if (!response.ok) {
+      throw new Error(`Error al obtener la configuración de la ruleta: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    console.log('✅ Configuración de ruleta recibida:', data);
+    return data;
+  } catch (error) {
+    console.error('❌ Error al conectar con la API de ruleta:', error);
+    throw error;
+  }
+}
+
+export async function spinRuleta(ruletaId: number): Promise<{premio_ganado: any, mensaje: string, exito: boolean}> {
+  const { apiBaseUrl } = getConfig();
+  
+  console.log('🎰 Girando ruleta:', ruletaId);
+  
+  const url = `${apiBaseUrl}/ruletas/${ruletaId}/spin`;
+  console.log('🌐 URL de la API:', url);
+
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'accept': 'application/json',
+      },
+      body: '',
+    });
+
+    console.log('📡 Respuesta de la API:', response.status, response.statusText);
+
+    if (!response.ok) {
+      throw new Error(`Error al girar la ruleta: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    console.log('✅ Resultado del giro recibido:', data);
+    return data;
+  } catch (error) {
+    console.error('❌ Error al conectar con la API de ruleta (spin):', error);
     throw error;
   }
 }

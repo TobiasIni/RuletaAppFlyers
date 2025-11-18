@@ -102,6 +102,38 @@ export interface MemotestConfig {
   parejas: MemotestPareja[];
 }
 
+// Tipos para Ruleta
+export interface RuletaPremio {
+  id: number;
+  nombre: string;
+  descripcion: string;
+  probabilidad: number;
+  cantidad_disponible: number;
+  limite_por_minutos: number;
+  positive: boolean;
+  ruleta_id: number;
+  activo: boolean;
+  cantidad_entregada: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface RuletaInfo {
+  id: number;
+  nombre: string;
+  descripcion: string;
+  company_id: number;
+  activa: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface RuletaConfig {
+  ruleta: RuletaInfo;
+  company: Company;
+  premios: RuletaPremio[];
+}
+
 export interface ApiResponse<T> {
   data: T;
   success: boolean;
