@@ -1,4 +1,4 @@
-import { Company, TriviaConfig, MemotestConfig, RuletaConfig } from '@/types/api';
+import { Company, TriviaConfig, MemotestConfig, RuletaConfig, RuletaPremio } from '@/types/api';
 import { getConfig } from '@/config/constants';
 
 export async function getCompanyData(): Promise<Company> {
@@ -128,7 +128,7 @@ export async function getRuletaConfig(ruletaId: number): Promise<RuletaConfig> {
   }
 }
 
-export async function spinRuleta(ruletaId: number): Promise<{premio_ganado: any, mensaje: string, exito: boolean}> {
+export async function spinRuleta(ruletaId: number): Promise<{premio_ganado: RuletaPremio, mensaje: string, exito: boolean}> {
   const { apiBaseUrl } = getConfig();
   
   console.log('🎰 Girando ruleta:', ruletaId);

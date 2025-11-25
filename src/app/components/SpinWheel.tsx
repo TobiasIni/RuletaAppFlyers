@@ -73,7 +73,7 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ prizes, onWin, colors: propColors
       
       // After rotating the wheel clockwise by normalizedRotation, 
       // the segment center moves to a new position
-      let rotatedCenterAngle = (segmentCenterAngle + normalizedRotation) % 360;
+      const rotatedCenterAngle = (segmentCenterAngle + normalizedRotation) % 360;
       
       // Distance from pointer at 270° (top of the wheel)
       let distance = Math.abs(rotatedCenterAngle - pointerAngle);
@@ -372,17 +372,17 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ prizes, onWin, colors: propColors
     <div className="flex flex-col items-center justify-center h-full w-full max-w-4xl">
       {/* Ambient glow effect */}
       <div className="absolute inset-0 flex items-center justify-center">
-        <div className="w-96 h-96 rounded-full bg-gradient-radial from-yellow-500/20 via-yellow-600/10 to-transparent blur-3xl opacity-60 animate-pulse"></div>
+        <div className="w-96 h-96 rounded-full bg-gradient-radial from-white-500/20 via-white-600/10 to-transparent blur-3xl opacity-60 animate-pulse"></div>
       </div>
       
       <div className="relative z-10 flex flex-col items-center justify-center">
         {/* Main loading spinner */}
         <div className="relative w-64 h-64 mb-8">
           {/* Outer rotating ring */}
-          <div className="absolute inset-0 rounded-full border-8 border-yellow-500/30 border-t-yellow-500 animate-spin"></div>
+          <div className="absolute inset-0 rounded-full border-8 border-white-500/30 border-t-white-500 animate-spin"></div>
           
           {/* Inner rotating ring */}
-          <div className="absolute inset-4 rounded-full border-6 border-yellow-400/40 border-t-yellow-400 animate-spin" style={{ animationDirection: 'reverse', animationDuration: '1.5s' }}></div>
+          <div className="absolute inset-4 rounded-full border-6 border-white-400/40 border-t-white-400 animate-spin" style={{ animationDirection: 'reverse', animationDuration: '1.5s' }}></div>
           
           {/* Center content */}
           <div className="absolute inset-0 flex items-center justify-center">
@@ -391,27 +391,27 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ prizes, onWin, colors: propColors
               <div className="text-6xl mb-4 animate-bounce">🎰</div>
               
               {/* Loading text */}
-              <div className="text-2xl font-bold text-yellow-500 font-oswald tracking-wider">
+              <div className="text-2xl font-bold text-white-500 font-oswald tracking-wider">
                 CARGANDO RULETA
               </div>
               
               {/* Loading dots */}
               <div className="flex justify-center space-x-1 mt-4">
-                <div className="w-2 h-2 bg-yellow-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                <div className="w-2 h-2 bg-yellow-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                <div className="w-2 h-2 bg-yellow-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                <div className="w-2 h-2 bg-white-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                <div className="w-2 h-2 bg-white-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                <div className="w-2 h-2 bg-white-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
               </div>
             </div>
           </div>
         </div>
         
         {/* Loading progress bar */}
-        <div className="w-80 h-2 bg-yellow-500/20 rounded-full overflow-hidden">
-          <div className="h-full bg-gradient-to-r from-yellow-500 to-yellow-400 rounded-full animate-pulse"></div>
+        <div className="w-80 h-2 bg-white-500/20 rounded-full overflow-hidden">
+          <div className="h-full bg-gradient-to-r from-white-500 to-white-400 rounded-full animate-pulse"></div>
         </div>
         
         {/* Loading text */}
-        <p className="text-yellow-600 text-lg font-oswald mt-6 animate-pulse">
+        <p className="text-white-600 text-lg font-oswald mt-6 animate-pulse">
           Preparando la experiencia de casino...
         </p>
       </div>
@@ -700,14 +700,7 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ prizes, onWin, colors: propColors
                   <path d="M12 6V12L16 14" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                 </svg>
               ) : (
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                  <rect x="3" y="3" width="18" height="18" rx="3" fill="currentColor" stroke="currentColor" strokeWidth="1.5"/>
-                  <circle cx="7" cy="7" r="1.5" fill="white"/>
-                  <circle cx="12" cy="12" r="1.5" fill="white"/>
-                  <circle cx="17" cy="17" r="1.5" fill="white"/>
-                  <circle cx="7" cy="17" r="1.5" fill="white"/>
-                  <circle cx="17" cy="7" r="1.5" fill="white"/>
-                </svg>
+                <img src="/dice.png" alt="Dado" width="48" height="48" className="object-contain" />
               )}
             </span>
             <span className="text-4xl tracking-wider" style={{ fontFamily: 'var(--font-montserrat)' }}>

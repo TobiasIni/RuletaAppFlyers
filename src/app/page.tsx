@@ -61,6 +61,8 @@ export default function Home() {
         return companyData.memotest_logo || '/memotest.png';
       case 'ruleta':
         return companyData.ruleta_logo || '/ruleta.png';
+      case 'juegos':
+        return companyData.juegos_logo || '/juegos.png';
       default:
         return '/trivia.png'; // fallback
     }

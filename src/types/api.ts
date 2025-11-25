@@ -33,6 +33,7 @@ export interface Company {
   memotest_logo?: string;
   trivia_logo?: string;
   ruleta_logo?: string;
+  juegos_logo?: string;
   created_at: string;
   updated_at: string;
   imagenes: Imagen[];
