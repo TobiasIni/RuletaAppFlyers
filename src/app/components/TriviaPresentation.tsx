@@ -34,8 +34,8 @@ export default function TriviaPresentation({ triviaConfig, onStart, onBack }: Tr
             className="rounded-2xl p-12 mb-16 w-full max-w-3xl"
             style={{ borderColor: company.color_secundario }}
           >
-            <h3 className="text-9xl mb-8 text-white mt-12">Instrucciones</h3>
-            <ul className="text-white space-y-5 text-5xl mt-36">
+            <h3 className="text-9xl mb-8 text-app-primary mt-12">Instrucciones</h3>
+            <ul className="text-app-primary space-y-5 text-5xl mt-36">
               <li>• Tienes 20 segundos por pregunta</li>
               <li>• Selecciona la respuesta correcta</li>
               <li>• ¡Piensa rápido y diviértete!</li>
@@ -45,7 +45,7 @@ export default function TriviaPresentation({ triviaConfig, onStart, onBack }: Tr
           {/* Botón comenzar */}
           <button
             onClick={onStart}
-            className="relative mt-20 px-24 py-10 text-white text-5xl rounded-2xl hover:scale-105 transition-all duration-500 shadow-xl hover:shadow-2xl overflow-hidden group"
+            className="relative mt-20 px-24 py-10 text-app-primary text-5xl rounded-2xl hover:scale-105 transition-all duration-500 shadow-xl hover:shadow-2xl overflow-hidden group"
             style={{
               background: `transparent`,
               backdropFilter: 'blur(10px)',

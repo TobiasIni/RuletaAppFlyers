@@ -157,11 +157,11 @@ export default function TriviaGame({ triviaConfig, onFinish, onBack }: TriviaGam
     }
     
     if (isCorrectAnswer(answer)) {
-      return 'text-white border-green-600';
+      return 'text-app-primary border-green-600';
     }
     
     if (isSelectedAnswer(answer) && !isCorrectAnswer(answer)) {
-      return 'text-white border-red-600';
+      return 'text-app-primary border-red-600';
     }
     
     return 'border-gray-800';
@@ -191,7 +191,7 @@ export default function TriviaGame({ triviaConfig, onFinish, onBack }: TriviaGam
     return (
       <div className="h-full flex items-center justify-center">
         <div className="text-center">
-          <p className="text-2xl text-white">Error: No se encontró la pregunta</p>
+          <p className="text-2xl text-app-primary">Error: No se encontró la pregunta</p>
         </div>
       </div>
     );
@@ -209,7 +209,7 @@ export default function TriviaGame({ triviaConfig, onFinish, onBack }: TriviaGam
                 alt="Tiempo agotado"
                 className="w-264 h-264 mx-auto mb-8 object-contain"
               />
-              <p className="text-2xl text-gray-600">Pasando a la siguiente pregunta...</p>
+              <p className="text-2xl text-app-primary">Pasando a la siguiente pregunta...</p>
             </div>
           </div>
         ) : (
@@ -243,7 +243,7 @@ export default function TriviaGame({ triviaConfig, onFinish, onBack }: TriviaGam
                     }}
                   />
                 </svg>
-                <div className={`absolute inset-0 flex items-center justify-center text-5xl ${isLowTime ? 'text-red-600 animate-pulse' : 'text-white'}`}>
+                <div className={`absolute inset-0 flex items-center justify-center text-5xl ${isLowTime ? 'text-red-600 animate-pulse' : 'text-app-primary'}`}>
                   {timeLeft}
                 </div>
               </div>
@@ -251,7 +251,7 @@ export default function TriviaGame({ triviaConfig, onFinish, onBack }: TriviaGam
 
             {/* Pregunta */}
             <div className="text-center mb-12">
-              <h2 className="text-6xl text-white font-bold mb-4 " style={{ letterSpacing: '0.05em' }}>
+              <h2 className="text-6xl text-app-primary font-bold mb-4 " style={{ letterSpacing: '0.05em' }}>
                 {currentQuestion?.pregunta || 'Pregunta no disponible'}
               </h2>
               {currentQuestion?.pregunta_imagen && (
@@ -328,7 +328,7 @@ export default function TriviaGame({ triviaConfig, onFinish, onBack }: TriviaGam
                                 ? 'text-green-500' 
                                 : isSelected 
                                   ? 'text-red-500'
-                                  : 'text-gray-800'
+                                  : 'text-app-primary'
                             }
                           `}>
                           </div>
@@ -337,10 +337,10 @@ export default function TriviaGame({ triviaConfig, onFinish, onBack }: TriviaGam
                           <p className="text-6xl font-medium">{option}</p>
                         </div>
                         {gameState === 'answered' && isCorrect && (
-                          <div className="text-white text-4xl flex-shrink-0">✓</div>
+                          <div className="text-app-primary text-4xl flex-shrink-0">✓</div>
                         )}
                         {gameState === 'answered' && isSelected && !isCorrect && (
-                          <div className="text-white text-4xl flex-shrink-0">✗</div>
+                          <div className="text-app-primary text-4xl flex-shrink-0">✗</div>
                         )}
                       </div>
                       <style jsx>{`

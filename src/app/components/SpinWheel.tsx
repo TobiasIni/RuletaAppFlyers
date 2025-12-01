@@ -151,7 +151,7 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ prizes, onWin, colors: propColors
         <path
           d={pathData}
           fill={`url(#segmentGradient${index})`}
-          stroke="#FFD700"
+          stroke="var(--wheel-border)"
           strokeWidth="2"
           filter="url(#segmentShadow)"
         />
@@ -391,7 +391,7 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ prizes, onWin, colors: propColors
               <div className="text-6xl mb-4 animate-bounce">🎰</div>
               
               {/* Loading text */}
-              <div className="text-2xl font-bold text-white-500 font-oswald tracking-wider">
+              <div className="text-2xl font-bold text-app-primary font-oswald tracking-wider">
                 CARGANDO RULETA
               </div>
               
@@ -411,7 +411,7 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ prizes, onWin, colors: propColors
         </div>
         
         {/* Loading text */}
-        <p className="text-white-600 text-lg font-oswald mt-6 animate-pulse">
+        <p className="text-app-primary text-lg font-oswald mt-6 animate-pulse">
           Preparando la experiencia de casino...
         </p>
       </div>
@@ -427,12 +427,12 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ prizes, onWin, colors: propColors
     <div className="flex flex-col items-center justify-center h-full w-[80vw] max-w-[80vw]">
       {/* Ambient glow effect */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <div className="w-96 h-96 rounded-full bg-gradient-radial from-yellow-500/20 via-yellow-600/10 to-transparent blur-3xl opacity-60 animate-pulse"></div>
+        <div className="w-96 h-96 rounded-full bg-gradient-radial from-black-500/20 via-black-600/10 to-transparent blur-3xl opacity-60 animate-pulse"></div>
       </div>
       
       {/* Title above the wheel */}
       <div className="text-center mb-2 z-10">
-        <h2 className="text-6xl font-bold text-white tracking-wider" style={{ fontFamily: 'var(--font-montserrat)' }}>
+        <h2 className="text-6xl font-bold text-app-primary tracking-wider mt-10" style={{ fontFamily: 'var(--font-montserrat)' }}>
           GIRÁ PARA ELEGIR TU MESA
         </h2>
       </div>
@@ -448,16 +448,19 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ prizes, onWin, colors: propColors
               
               {/* Main pointer with gradient and glow */}
               <div className="relative">
-                <div className="w-0 h-0 border-l-[24px] border-r-[24px] border-t-[50px] border-l-transparent border-r-transparent border-t-yellow-500 drop-shadow-2xl"
+                <div className="w-0 h-0 border-l-[24px] border-r-[24px] border-t-[50px] border-l-transparent border-r-transparent drop-shadow-2xl"
                   style={{
+                    borderTopColor: 'var(--wheel-pointer)',
                     filter: 'drop-shadow(0 0 10px rgba(255, 217, 0, 0)) drop-shadow(0 4px 20px rgba(0, 0, 0, 0.6))'
                   }}></div>
                 
                 {/* Inner golden gradient */}
-                <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[20px] border-r-[20px] border-t-[42px] border-l-transparent border-r-transparent border-t-yellow-300"></div>
+                <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[20px] border-r-[20px] border-t-[42px] border-l-transparent border-r-transparent"
+                  style={{ borderTopColor: 'var(--wheel-center-border)' }}></div>
                 
                 {/* Highlight effect */}
-                <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[16px] border-r-[16px] border-t-[35px] border-l-transparent border-r-transparent border-t-yellow-100 opacity-60"></div>
+                <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[16px] border-r-[16px] border-t-[35px] border-l-transparent border-r-transparent opacity-60"
+                  style={{ borderTopColor: 'var(--wheel-center-border)' }}></div>
               </div>
             </div>
           </div>
@@ -479,10 +482,10 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ prizes, onWin, colors: propColors
           <defs>
             {/* Outer ring gradient with metallic effect */}
             <radialGradient id="outerRingGradient" cx="50%" cy="30%" r="70%">
-              <stop offset="0%" stopColor="#FFD700" />
-              <stop offset="300%" stopColor="#B8860B" />
-              <stop offset="700%" stopColor="#DAA520" />
-              <stop offset="1000%" stopColor="#8B7355" />
+              <stop offset="0%" stopColor="var(--wheel-border)" />
+              <stop offset="300%" stopColor="var(--wheel-border)" />
+              <stop offset="700%" stopColor="var(--wheel-border)" />
+              <stop offset="1000%" stopColor="var(--wheel-border)" />
             </radialGradient>
             
             {/* Inner ring gradient */}
@@ -512,7 +515,7 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ prizes, onWin, colors: propColors
             cy="200"
             r="195"
             fill="url(#outerRingGradient)"
-            stroke="#FFD700"
+            stroke="var(--wheel-border)"
             strokeWidth="4"
             opacity="0.9"
           />
@@ -541,7 +544,7 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ prizes, onWin, colors: propColors
                   cy={lightY}
                   r="4"
                   fill="url(#lightBulbGradient)"
-                  stroke="#FFD700"
+                  stroke="var(--wheel-border)"
                   strokeWidth="0.5"
                 />
                 
@@ -575,7 +578,7 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ prizes, onWin, colors: propColors
             cy="200"
             r="30"
             fill="url(#centerGradient)"
-            stroke="#FFD700"
+            stroke="var(--wheel-border)"
             strokeWidth="3"
             filter="url(#centerShadow)"
           />
@@ -602,8 +605,8 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ prizes, onWin, colors: propColors
           {/* Additional gradient definitions */}
           <defs>
             <radialGradient id="centerGradient" cx="30%" cy="30%" r="70%">
-              <stop offset="0%" stopColor="#FFD700"/>
-              <stop offset="40%" stopColor="#B8860B"/>
+              <stop offset="0%" stopColor="var(--wheel-border)"/>
+              <stop offset="40%" stopColor="var(--wheel-border)"/>
               <stop offset="80%" stopColor="#2F4F4F"/>
               <stop offset="100%" stopColor="#1C1C1C"/>
             </radialGradient>
@@ -618,8 +621,10 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ prizes, onWin, colors: propColors
           {/* Ultra elegant center logo with advanced effects */}
           <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 rounded-full z-10 flex items-center justify-center">
             {/* Main logo container */}
-            <div className="relative w-full h-full rounded-full bg-gradient-to-br from-yellow-500 via-yellow-400 to-yellow-600 border-4 border-yellow-300 overflow-hidden"
+            <div className="relative w-full h-full rounded-full overflow-hidden border-4"
               style={{
+                background: `linear-gradient(to bottom right, var(--wheel-center-primary), var(--wheel-center-secondary), var(--wheel-center-tertiary))`,
+                borderColor: 'var(--wheel-center-border)',
                 boxShadow: `
                   0 0 20px rgba(212, 212, 212, 0.6),
                   0 0 40px rgba(212, 212, 212, 0.6),
@@ -636,7 +641,7 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ prizes, onWin, colors: propColors
               <img 
                 src={logo || "/images/d3.jpg"} 
                 alt="Logo" 
-                className="w-full h-full rounded-full object-cover relative z-10" 
+                className="w-full h-full rounded-full object-contain relative z-10 p-2" 
               />
               
               {/* Shine effect */}
@@ -692,7 +697,7 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ prizes, onWin, colors: propColors
             />
           )}
           
-          <span className="flex items-center justify-center space-x-4 relative z-10 text-white">
+          <span className="flex items-center justify-center space-x-4 relative z-10 text-app-primary">
             <span className={isSpinning ? 'animate-spin' : ''}>
               {isSpinning ? (
                 <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

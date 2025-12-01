@@ -54,8 +54,8 @@ export default function TriviaResults({ triviaConfig, score, total, onPlayAgain,
   };
 
   const getResultColor = () => {
-    if (isPerfect) return "text-white";
-    return "text-white";
+    if (isPerfect) return "text-app-primary";
+    return "text-app-primary";
   };
 
   return (
@@ -131,7 +131,7 @@ export default function TriviaResults({ triviaConfig, score, total, onPlayAgain,
             </p>
           </div> */}
 
-          <p className="text-white text-5xl mb-48">
+          <p className="text-app-primary text-5xl mb-48">
                         {score} respuesta{score !== 1 ? 's' : ''} correcta{score !== 1 ? 's' : ''} de {total} pregunta{total !== 1 ? 's' : ''}
                       </p>
 
@@ -139,7 +139,7 @@ export default function TriviaResults({ triviaConfig, score, total, onPlayAgain,
           <div className="flex flex-col sm:flex-row gap-6 justify-center mt-8">
             <button
               onClick={onPlayAgain}
-              className="relative px-24 py-10 text-white text-5xl rounded-2xl hover:scale-105 transition-all duration-500 shadow-xl hover:shadow-2xl overflow-hidden group"
+              className="relative px-24 py-10 text-app-primary text-5xl rounded-2xl hover:scale-105 transition-all duration-500 shadow-xl hover:shadow-2xl overflow-hidden group"
               style={{
                 background: `transparent`,
                 backdropFilter: 'blur(10px)',
@@ -175,7 +175,7 @@ export default function TriviaResults({ triviaConfig, score, total, onPlayAgain,
             
             <button
               onClick={onBack}
-              className="px-24 py-10 bg-gray-600 text-white text-5xl rounded-2xl hover:bg-gray-700 hover:scale-105 transition-all duration-300 shadow-xl hover:shadow-2xl"
+              className="px-24 py-10 bg-gray-600 text-app-primary text-5xl rounded-2xl hover:bg-gray-700 hover:scale-105 transition-all duration-300 shadow-xl hover:shadow-2xl"
             >
               Volver al Menú
             </button>

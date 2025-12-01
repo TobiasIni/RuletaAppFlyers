@@ -21,8 +21,8 @@ export default function MemotestPresentation({ memotestConfig, onStart, onBack }
           <div 
             className="rounded-2xl p-12 mb-16 w-full max-w-3xl"
           >
-            <h3 className="text-9xl mb-32 text-white">Instrucciones</h3>
-            <ul className="text-white space-y-5 text-5xl">
+            <h3 className="text-9xl mb-32 text-app-primary">Instrucciones</h3>
+            <ul className="text-app-primary space-y-5 text-5xl">
               <li>• Tienes {gameTime} segundos para encontrar todas las parejas</li>
               <li>• Haz clic en las cartas para voltearlas</li>
               <li>• Encuentra las parejas que coincidan</li>
@@ -33,7 +33,7 @@ export default function MemotestPresentation({ memotestConfig, onStart, onBack }
           {/* Botón comenzar */}
           <button
             onClick={onStart}
-            className="relative mt-20 px-24 py-10 text-white text-5xl rounded-2xl hover:scale-105 transition-all duration-500 shadow-xl hover:shadow-2xl overflow-hidden group"
+            className="relative mt-20 px-24 py-10 text-app-primary text-5xl rounded-2xl hover:scale-105 transition-all duration-500 shadow-xl hover:shadow-2xl overflow-hidden group"
             style={{
               background: `transparent`,
               backdropFilter: 'blur(10px)',

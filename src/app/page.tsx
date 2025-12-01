@@ -73,7 +73,7 @@ export default function Home() {
       <div className="flex items-center justify-center h-full">
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-xl text-gray-600">Cargando juegos...</p>
+          <p className="text-xl text-app-primary">Cargando juegos...</p>
         </div>
       </div>
     );
@@ -84,8 +84,8 @@ export default function Home() {
       <div className="flex items-center justify-center h-full">
         <div className="text-center p-8">
           <div className="text-red-500 text-6xl mb-4">⚠️</div>
-          <h2 className="text-2xl  text-gray-800 mb-2">Error</h2>
-          <p className="text-gray-600 mb-4">{error}</p>
+          <h2 className="text-2xl text-app-primary mb-2">Error</h2>
+          <p className="text-app-primary mb-4">{error}</p>
           <button 
             onClick={() => window.location.reload()} 
             className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
@@ -115,23 +115,23 @@ export default function Home() {
     <div className="h-full flex flex-col">
       {/* Header */}
       <header 
-        className="text-white p-6 text-center"
+        className="text-app-primary p-6 text-center"
         style={{
           background: "transparent"
         }}
       >
       
-        <h1 className="text-8xl font-extrabold mb-2">Seleccioná un juego para comenzar</h1>
+        {/* <h1 className="text-8xl font-extrabold mb-2">Seleccioná un juego para comenzar</h1> */}
       </header>
 
       {/* Games Grid */}
-      <main className="flex-1 p-8 overflow-y-auto flex items-center justify-center">
+      <main className="flex-1 p-8 overflow-y-auto flex items-center justify-center mt-40">
         {games.length === 0 ? (
           <div className="flex items-center justify-center h-full">
             <div className="text-center">
               <div className="text-6xl mb-4">🎮</div>
-              <h2 className="text-2xl  text-gray-800 mb-2">No hay juegos disponibles</h2>
-              <p className="text-gray-600">No se encontraron juegos para esta empresa.</p>
+              <h2 className="text-2xl text-app-primary mb-2">No hay juegos disponibles</h2>
+              <p className="text-app-primary">No se encontraron juegos para esta empresa.</p>
             </div>
           </div>
         ) : (
@@ -190,7 +190,7 @@ export default function Home() {
                       }
                     }}
                   />
-                  <div className="text-white text-4xl hidden">🎮</div>
+                  <div className="text-app-primary text-4xl hidden">🎮</div>
                 </div>
                 <style jsx>{`
                   @keyframes liquidMove {
@@ -201,7 +201,8 @@ export default function Home() {
                 `}</style>
               </button>
             ))}
-          <p className="text-white text-5xl mt-40" style={{ fontFamily: 'var(--font-montserrat)' }}>#LlegamosLejosParaEstarCerca</p>
+          <p className="text-7xl font-bold text-app-primary mt-40" >Make it work</p>
+          <p className="text-7xl font-bold text-app-primary" >Make it better</p>
           </div>
 
         )}

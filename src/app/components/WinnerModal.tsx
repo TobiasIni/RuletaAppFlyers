@@ -105,13 +105,13 @@ const WinnerModal: React.FC<WinnerModalProps> = ({ winner, isOpen, onClose }) =>
         
         <div className="relative z-10">
           <div className="mb-8">
-            <p className="text-3xl text-white" style={{ fontFamily: 'var(--font-montserrat)' }}>
+            <p className="text-3xl text-app-secondary" style={{ fontFamily: 'var(--font-montserrat)' }}>
               {isPositive ? 'TU MESA ES' : '¡Mejor suerte la próxima vez!'}
             </p>
           </div>
 
           <div
-            className="inline-block px-10 py-8 rounded-xl text-white font-bold text-5xl mb-10 shadow-2xl border-4 border-white bg-gradient-to-br from-gray-800 to-black"
+            className="inline-block px-10 py-8 rounded-xl text-app-secondary font-bold text-5xl mb-10 shadow-2xl border-4 border-white bg-gradient-to-br from-gray-800 to-black"
             style={{ 
               backgroundColor: winner.color,
               boxShadow: `0 0 30px ${winner.color}50, inset 0 0 20px rgba(0,0,0,0.5)`,
@@ -152,7 +152,7 @@ const WinnerModal: React.FC<WinnerModalProps> = ({ winner, isOpen, onClose }) =>
               }}
             />
             
-            <span className="flex items-center justify-center space-x-4 relative z-10 text-white">
+            <span className="flex items-center justify-center space-x-4 relative z-10 text-app-secondary">
               <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 <path d="M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>

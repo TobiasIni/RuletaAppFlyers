@@ -190,7 +190,7 @@ export default function MemotestGame({ memotestConfig, onFinish, onBack }: Memot
                 }}
               />
             </svg>
-            <div className={`absolute inset-0 flex items-center justify-center text-2xl  ${isLowTime ? 'text-red-600 animate-pulse' : 'text-gray-700'}`}>
+            <div className={`absolute inset-0 flex items-center justify-center text-2xl  ${isLowTime ? 'text-red-600 animate-pulse' : 'text-app-primary'}`}>
               {timeLeft}
             </div>
           </div>

@@ -123,7 +123,7 @@ export default function Ruleta({ juegoId, onBack }: RuletaProps) {
       <div className="h-full w-full flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-white mx-auto mb-4"></div>
-          <p className="text-xl text-gray-600">Cargando ruleta...</p>
+          <p className="text-xl text-app-primary">Cargando ruleta...</p>
         </div>
       </div>
     );
@@ -134,11 +134,11 @@ export default function Ruleta({ juegoId, onBack }: RuletaProps) {
       <div className="h-full w-full flex items-center justify-center">
         <div className="text-center p-8">
           <div className="text-red-500 text-6xl mb-4">⚠️</div>
-          <h2 className="text-2xl text-gray-800 mb-2">Error</h2>
-          <p className="text-gray-600 mb-4">{error}</p>
+          <h2 className="text-2xl text-app-primary mb-2">Error</h2>
+          <p className="text-app-primary mb-4">{error}</p>
           <button 
             onClick={handleBack}
-            className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+            className="bg-blue-600 text-app-primary px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
           >
             Volver al Menú
           </button>
@@ -151,7 +151,7 @@ export default function Ruleta({ juegoId, onBack }: RuletaProps) {
     <div className="h-full w-full flex flex-col overflow-hidden relative">
       {/* Error message */}
       {error && (
-        <div className="absolute top-20 left-1/2 transform -translate-x-1/2 z-30 bg-red-600 text-white px-4 py-2 rounded-lg">
+        <div className="absolute top-20 left-1/2 transform -translate-x-1/2 z-30 bg-red-600 text-app-primary px-4 py-2 rounded-lg">
           {error}
         </div>
       )}

@@ -1,6 +1,6 @@
 // Configuración por defecto para desarrollo
 export const DEFAULT_CONFIG = {
-  COMPANY_ID: '11',
+  COMPANY_ID: '13',
   API_BASE_URL: 'https://api-cmsd3.emanzano.com'
 } as const;
 

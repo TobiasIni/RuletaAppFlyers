@@ -127,22 +127,22 @@ export default function MemotestResults({
 
         <div className="mb-10">
                   
-            <h2 className={`text-9xl mb-32 mt-24 text-white`}>
+            <h2 className={`text-9xl mb-32 mt-24 text-app-primary`}>
               {getResultMessage()}
             </h2>
           </div>
           {isWin ? (
             <div className="mb-10 p-6 rounded-2xl max-w-3xl w-full">
-              <p className="text-white text-6xl mt-24">
+              <p className="text-app-primary text-6xl mt-24">
                 ¡Excelente memoria! Encontraste todas las parejas en {timeUsed} segundos.
               </p>
             </div>
           ) : (
             <div className="mb-10 p-6 rounded-2xl max-w-3xl w-full">
-              <p className="text-white text-6xl mt-24">
+              <p className="text-app-primary text-6xl mt-24">
                 Se acabó el tiempo. 
               </p>
-              <p className="text-white text-6xl mt-24">
+              <p className="text-app-primary text-6xl mt-24">
               Encontraste {pairsFound} de {totalPairs} parejas. 
               </p>
             </div>
@@ -152,7 +152,7 @@ export default function MemotestResults({
           <div className="flex flex-col sm:flex-row gap-6 justify-center mt-20">
           <button
               onClick={onPlayAgain}
-              className="relative px-24 py-10 text-white text-5xl rounded-2xl hover:scale-105 transition-all duration-500 shadow-xl hover:shadow-2xl overflow-hidden group"
+              className="relative px-24 py-10 text-app-primary text-5xl rounded-2xl hover:scale-105 transition-all duration-500 shadow-xl hover:shadow-2xl overflow-hidden group"
               style={{
                 background: `transparent`,
                 backdropFilter: 'blur(10px)',
@@ -188,7 +188,7 @@ export default function MemotestResults({
             
             <button
               onClick={onBack}
-              className="px-24 py-10 bg-gray-600 text-white text-5xl rounded-2xl hover:bg-gray-700 hover:scale-105 transition-all duration-300 shadow-xl hover:shadow-2xl"
+              className="px-24 py-10 bg-gray-600 text-app-primary text-5xl rounded-2xl hover:bg-gray-700 hover:scale-105 transition-all duration-300 shadow-xl hover:shadow-2xl"
             >
               Volver al Menú
             </button>
