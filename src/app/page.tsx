@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { JuegoHabilitado, Company } from '@/types/api';
-import { getCompanyData } from '@/lib/api';
 import Trivia from './components/Trivia';
 import Memotest from './components/Memotest';
 import Ruleta from './components/Ruleta';
@@ -10,36 +9,88 @@ import Ruleta from './components/Ruleta';
 export default function Home() {
   const [companyData, setCompanyData] = useState<Company | null>(null);
   const [games, setGames] = useState<JuegoHabilitado[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [selectedGame, setSelectedGame] = useState<JuegoHabilitado | null>(null);
   const [clickedGameId, setClickedGameId] = useState<number | null>(null);
 
   useEffect(() => {
-    const fetchCompanyData = async () => {
-      try {
-        setLoading(true);
-        const data = await getCompanyData();
-        setCompanyData(data);
-        // Filtrar solo los juegos activos
-        const activeGames = data.juegos_habilitados.filter(juego => juego.activo);
-        setGames(activeGames);
-        setError(null);
-      } catch (err) {
-        console.error('Error al cargar los datos:', err);
-        setError('Error al cargar los datos. Por favor, verifica la configuración.');
-      } finally {
-        setLoading(false);
-      }
+    // Crear juegos mock sin depender de la API
+    const mockCompany: Company = {
+      id: 1,
+      nombre: 'Casino D3',
+      background: '/background.png',
+      logo: '/images/d3.jpg',
+      color_primario: '#CD0303',
+      color_secundario: '#FFD700',
+      color_terciario: '#2F4F4F',
+      ruleta_logo: '/ruleta.png',
+      juegos_logo: '/juegos.png',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      imagenes: [],
+      juegos_habilitados: [],
     };
 
-    fetchCompanyData();
+    const mockGames: JuegoHabilitado[] = [
+      {
+        id: 1,
+        nombre: 'Cena',
+        descripcion: 'Activo a partir de las 20 hs',
+        tipo: 'ruleta',
+        activo: true,
+        juego_id: 1,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      },
+      {
+        id: 2,
+        nombre: 'Juegos',
+        descripcion: '',
+        tipo: 'juegos',
+        activo: true,
+        juego_id: 2,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      },
+    ];
+
+    setCompanyData(mockCompany);
+    setGames(mockGames);
   }, []);
 
-  const handleGameSelect = (game: JuegoHabilitado) => {
+  const handleGameSelect = async (game: JuegoHabilitado) => {
     console.log('Juego seleccionado:', game);
     setClickedGameId(game.id);
-    // Esperar 400ms para la animación antes de cambiar de vista
+    
+    // Si el tipo es 'juegos', ejecutar el launcher en lugar de mostrar un componente
+    if (game.tipo.toLowerCase() === 'juegos') {
+      try {
+        const response = await fetch('/api/launch', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            gameId: game.id,
+          }),
+        });
+        const data = await response.json();
+        if (data.success) {
+          console.log('Launcher ejecutado correctamente:', data.message);
+        } else {
+          console.error('Error al ejecutar el launcher:', data.message);
+        }
+      } catch (error) {
+        console.error('Error al llamar a la API del launcher:', error);
+      } finally {
+        // Resetear el estado después de un breve delay
+        setTimeout(() => {
+          setClickedGameId(null);
+        }, 400);
+      }
+      return;
+    }
+    
+    // Para otros tipos de juegos, comportamiento normal
     setTimeout(() => {
       setSelectedGame(game);
       setClickedGameId(null);
@@ -68,35 +119,6 @@ export default function Home() {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-xl text-app-primary">Cargando juegos...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <div className="text-center p-8">
-          <div className="text-red-500 text-6xl mb-4">⚠️</div>
-          <h2 className="text-2xl text-app-primary mb-2">Error</h2>
-          <p className="text-app-primary mb-4">{error}</p>
-          <button 
-            onClick={() => window.location.reload()} 
-            className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            Reintentar
-          </button>
-        </div>
-      </div>
-    );
-  }
-
   // Si hay un juego seleccionado, mostrar el juego correspondiente
   if (selectedGame?.tipo === 'trivia') {
     return <Trivia juegoId={selectedGame.juego_id} onBack={handleBackToMenu} />;
@@ -107,108 +129,159 @@ export default function Home() {
   }
 
   if (selectedGame?.tipo === 'ruleta') {
-    return <Ruleta juegoId={selectedGame.juego_id} onBack={handleBackToMenu} />;
+    return (
+      <>
+        {/* Back button - top left corner, outside all containers */}
+        <button
+          onClick={handleBackToMenu}
+          className="
+            fixed top-4 left-4 z-[100]
+            flex items-center justify-center
+            w-16 h-16 rounded-full
+            transform transition-all duration-300 ease-out
+            bg-white/10 hover:bg-white/20 active:scale-95 hover:scale-105
+            backdrop-filter backdrop-blur-md
+            border-2 border-white/30
+            shadow-lg
+          "
+          style={{
+            boxShadow: '0 4px 16px 0 rgba(0, 0, 0, 0.3), inset 0 0 10px rgba(255, 255, 255, 0.1)'
+          }}
+          title="Volver al menú"
+        >
+          <svg 
+            width="32" 
+            height="32" 
+            viewBox="0 0 24 24" 
+            fill="none" 
+            stroke="currentColor" 
+            strokeWidth="3" 
+            strokeLinecap="round" 
+            strokeLinejoin="round"
+            className="text-app-primary"
+          >
+            <path d="M19 12H5M12 19l-7-7 7-7"/>
+          </svg>
+        </button>
+        <Ruleta juegoId={selectedGame.juego_id} onBack={handleBackToMenu} />
+      </>
+    );
   }
 
   // Si no hay juego seleccionado, mostrar el menú principal
   return (
-    <div className="h-full flex flex-col">
-      {/* Header */}
-      <header 
-        className="text-app-primary p-6 text-center"
-        style={{
-          background: "transparent"
-        }}
-      >
-      
-        {/* <h1 className="text-8xl font-extrabold mb-2">Seleccioná un juego para comenzar</h1> */}
-      </header>
-
-      {/* Games Grid */}
-      <main className="flex-1 p-8 overflow-y-auto flex items-center justify-center mt-40">
-        {games.length === 0 ? (
-          <div className="flex items-center justify-center h-full">
-            <div className="text-center">
-              <div className="text-6xl mb-4">🎮</div>
-              <h2 className="text-2xl text-app-primary mb-2">No hay juegos disponibles</h2>
-              <p className="text-app-primary">No se encontraron juegos para esta empresa.</p>
-            </div>
+    <div className="h-full flex flex-col overflow-visible">
+      {/* Main Content */}
+      <main className="flex-1 p-0 overflow-visible flex items-center justify-center">
+        <div className="flex flex-col items-center justify-center w-full">
+          {/* Logo separado */}
+          <div className="-mt-20 pb-8 flex justify-center items-center flex-shrink-0">
+            <img 
+              src="/logo_EOY.png" 
+              alt="Logo End of Year" 
+              className="h-64 w-auto object-contain"
+            />
           </div>
-        ) : (
-          <div className="flex flex-col gap-6 w-full max-w-4xl h-full items-center justify-center">
-            {games.map((game) => (
-              <button
-                key={game.id}
-                onClick={() => handleGameSelect(game)}
-                disabled={clickedGameId !== null}
-                style={{ 
-                  height: `calc((100% - ${(3 - 1) * 1.5}rem) / 3)`,
-                  background: 'rgba(255, 255, 255, 0.1)',
-                  backdropFilter: 'blur(10px)',
-                  border: '4px solid rgba(255, 255, 255, 0.3)',
-                  boxShadow: clickedGameId === game.id 
-                    ? '0 10px 32px 0 rgba(0, 0, 0, 0.4), inset 0 0 20px rgba(255, 255, 255, 0.15)'
-                    : '0 8px 32px 0 rgba(0, 0, 0, 0.3), inset 0 0 20px rgba(255, 255, 255, 0.1)'
-                }}
-                className={`relative rounded-2xl transition-all duration-500 ease-out transform p-4 flex flex-col w-full overflow-hidden group
-                  ${clickedGameId === game.id 
-                    ? 'scale-105 -translate-y-1' 
-                    : clickedGameId !== null
-                    ? 'opacity-60 scale-98'
-                    : 'hover:-translate-y-1 active:translate-y-1 hover:scale-[1.02]'
-                  }`}
-              >
-                {/* Efecto de brillo líquido */}
-                <div 
-                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-                  style={{
-                    background: `radial-gradient(circle at center, rgba(255, 255, 255, 0.2) 0%, transparent 70%)`,
-                    animation: 'liquidMove 3s ease-in-out infinite'
+
+          {/* Games Grid */}
+          <div className="w-full flex items-center justify-center mt-8">
+          {games.length === 0 ? (
+            <div className="flex items-center justify-center h-full">
+              <div className="text-center">
+                <div className="text-6xl mb-4">🎮</div>
+                <h2 className="text-2xl text-app-primary mb-2">No hay juegos disponibles</h2>
+                <p className="text-app-primary">No se encontraron juegos para esta empresa.</p>
+              </div>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-20 w-full max-w-5xl items-center justify-center">
+              {games.map((game) => {
+              // Determinar el color e icono según el tipo de juego
+              const buttonColor = game.tipo === 'ruleta' ? '#F072A2' : '#61BDC0';
+              const iconSrc = game.tipo === 'ruleta' ? '/images/cena.png' : '/juegos.png';
+              const iconAlt = game.tipo === 'ruleta' ? 'Icono de Cena' : 'Icono de Juegos';
+              
+              return (
+                <button
+                  key={game.id}
+                  onClick={() => handleGameSelect(game)}
+                  disabled={clickedGameId !== null}
+                  style={{ 
+                    height: 'auto',
+                    minHeight: '350px',
+                    background: buttonColor,
+                    borderTop: '10px solid #000000',
+                    borderLeft: '10px solid #000000',
+                    borderRight: '10px solid #000000',
+                    borderBottom: '20px solid #000000',
+                    borderRadius: '24px',
+                    boxShadow: clickedGameId === game.id 
+                      ? '0 12px 40px 0 rgba(0, 0, 0, 0.5), inset 0 0 30px rgba(255, 255, 255, 0.2)'
+                      : '0 10px 35px 0 rgba(0, 0, 0, 0.4), inset 0 0 20px rgba(255, 255, 255, 0.15)'
                   }}
-                />
-                {/* Reflejo superior */}
-                <div 
-                  className="absolute top-0 left-0 right-0 h-1/3 opacity-20 pointer-events-none"
-                  style={{
-                    background: 'linear-gradient(180deg, rgba(255, 255, 255, 0.4) 0%, transparent 100%)',
-                    borderRadius: '1rem 1rem 0 0'
-                  }}
-                />
-                <div className="w-full h-full rounded-lg flex items-center justify-center overflow-hidden relative z-10">
-                  <img 
-                    src={getGameImage(game.tipo)} 
-                    alt={`Imagen de ${game.nombre}`}
-                    className={`w-full h-full object-contain p-4 transition-transform duration-300 ease-out ${
-                      clickedGameId === game.id ? 'scale-105' : ''
+                  className={`relative transition-all duration-500 ease-out transform p-8 flex items-center justify-start w-full overflow-hidden group
+                    ${clickedGameId === game.id 
+                      ? 'scale-105 -translate-y-1' 
+                      : clickedGameId !== null
+                      ? 'opacity-60 scale-98'
+                      : 'hover:-translate-y-1 active:translate-y-1 hover:scale-[1.02]'
                     }`}
-                    onError={(e) => {
-                      // Fallback a emoji si la imagen no se carga
-                      e.currentTarget.style.display = 'none';
-                      const fallback = e.currentTarget.nextElementSibling as HTMLElement;
-                      if (fallback) {
-                        fallback.style.display = 'flex';
-                      }
+                >
+                  {/* Efecto de brillo */}
+                  <div 
+                    className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                    style={{
+                      background: `radial-gradient(circle at center, rgba(255, 255, 255, 0.3) 0%, transparent 70%)`,
+                      animation: 'liquidMove 3s ease-in-out infinite',
+                      borderRadius: '24px'
                     }}
                   />
-                  <div className="text-app-primary text-4xl hidden">🎮</div>
-                </div>
-                <style jsx>{`
-                  @keyframes liquidMove {
-                    0%, 100% { transform: translate(0%, 0%) scale(1); }
-                    33% { transform: translate(30%, -30%) scale(1.2); }
-                    66% { transform: translate(-30%, 30%) scale(1.1); }
-                  }
-                `}</style>
-              </button>
-            ))}
-          <p className="text-7xl font-bold text-app-primary mt-40" >Make it work</p>
-          <p className="text-7xl font-bold text-app-primary" >Make it better</p>
+                  
+                  {/* Icono a la izquierda */}
+                  <div className="relative z-10 flex-shrink-0 mr-8">
+                    <img 
+                      src={iconSrc} 
+                      alt={iconAlt}
+                      className="w-64 h-64 object-contain"
+                    />
+                  </div>
+                  
+                  {/* Texto a la derecha */}
+                  <div className="relative z-10 flex flex-col items-start text-left">
+                    <h3 className="text-6xl font-bold text-white mb-2" style={{ fontFamily: 'var(--font-montserrat)' }}>
+                      {game.nombre}
+                    </h3>
+                    <p className="text-3xl text-white/90" style={{ fontFamily: 'var(--font-montserrat)' }}>
+                      {game.descripcion}
+                    </p>
+                  </div>
+                  
+                  <style jsx>{`
+                    @keyframes liquidMove {
+                      0%, 100% { transform: translate(0%, 0%) scale(1); }
+                      33% { transform: translate(30%, -30%) scale(1.2); }
+                      66% { transform: translate(-30%, 30%) scale(1.1); }
+                    }
+                  `}</style>
+                </button>
+              );
+              })}
+            </div>
+          )}
           </div>
-
-        )}
+        </div>
       </main>
 
-     
+      {/* Footer con estrellas y texto */}
+      {games.length > 0 && (
+        <footer className="flex-shrink-0 pb-12 pt-0 flex justify-center">
+          <div className="flex flex-col items-center gap-0">
+            <img src="/images/estrellas.png" alt="Logo" className="w-120 h-120 object-contain" />
+            <p className="text-7xl font-bold text-app-primary leading-none -mt-15" >Make it work,</p>
+            <p className="text-7xl font-bold text-app-primary leading-none" >Make it better</p>
+          </div>
+        </footer>
+      )}
     </div>
   );
 }

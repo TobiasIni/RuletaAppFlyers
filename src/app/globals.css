@@ -11,7 +11,7 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
-  --font-bogle: 'Bebas Neue', Arial, Helvetica, sans-serif;
+  --font-bogle: var(--font-space-grotesk), 'Bebas Neue', Arial, Helvetica, sans-serif;
   
   /* Colores de texto personalizables */
   --text-primary: #171717;        /* Texto principal (títulos, encabezados) */
@@ -67,7 +67,7 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-bogle), Arial, Helvetica, sans-serif;
+  font-family: var(--font-space-grotesk), Arial, Helvetica, sans-serif;
   margin: 0;
   padding: 0;
   overflow: hidden;
@@ -88,7 +88,7 @@ body {
   height: calc(100vh - 600px); /* 100px de margen arriba y abajo */
   background: transparent;
   border-radius: 20px;
-  overflow: hidden;
+  overflow: visible;
   position: relative;
   display: flex;
   flex-direction: column;

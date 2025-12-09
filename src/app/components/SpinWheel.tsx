@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { RuletaPremio } from '@/types/api';
 import { spinRuleta } from '@/lib/api';
 
 interface Prize {
@@ -24,14 +23,13 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ prizes, onWin, colors: propColors
   const [isSpinning, setIsSpinning] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [rotation, setRotation] = useState(0);
+  const [lastMesa, setLastMesa] = useState<string | null>(null);
   const wheelRef = useRef<SVGSVGElement>(null);
   const animationRef = useRef<number | null>(null);
 
   // Use provided colors or fallback to default colors
   const colors = propColors || [
-    '#CD0303', '#CD0303', '#CD0303', '#CD0303', '#CD0303',
-    '#CD0303', '#2F4F4F', '#8B0000', '#006400', '#CD0303',
-    '#CD0303', '#8B008B', '#FF1493', '#32CD32', '#FF8C00'
+    '#F17586','#68DEBF', '#63D0DF', '#E9EAEA',
   ];
 
   // Calculate segment angle
@@ -67,6 +65,9 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ prizes, onWin, colors: propColors
     let closestIndex = 0;
     let closestDistance = Infinity;
     
+    // Log all segments for debugging
+    const segmentDetails = [];
+    
     for (let i = 0; i < prizes.length; i++) {
       // Segment center in math coordinates (0° = right, 90° = bottom, etc.)
       const segmentCenterAngle = (i * segmentAngle) + (segmentAngle / 2);
@@ -78,6 +79,15 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ prizes, onWin, colors: propColors
       // Distance from pointer at 270° (top of the wheel)
       let distance = Math.abs(rotatedCenterAngle - pointerAngle);
       if (distance > 180) distance = 360 - distance;
+      
+      segmentDetails.push({
+        index: i,
+        prizeId: prizes[i].id,
+        prizeName: prizes[i].text,
+        segmentCenterAngle,
+        rotatedCenterAngle,
+        distance
+      });
       
       if (distance < closestDistance) {
         closestDistance = distance;
@@ -92,6 +102,7 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ prizes, onWin, colors: propColors
       closestIndex,
       closestDistance,
       landingPrize: prizes[closestIndex]?.text,
+      allSegments: segmentDetails
     });
     
     return closestIndex;
@@ -124,26 +135,30 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ prizes, onWin, colors: propColors
     
     const largeArcFlag = angle > 180 ? 1 : 0;
     
-    const x1 = 200 + 180 * Math.cos(startAngleRad);
-    const y1 = 200 + 180 * Math.sin(startAngleRad);
-    const x2 = 200 + 180 * Math.cos(endAngleRad);
-    const y2 = 200 + 180 * Math.sin(endAngleRad);
+    const centerX = 260;
+    const centerY = 260;
+    const radius = 240;
+    
+    const x1 = centerX + radius * Math.cos(startAngleRad);
+    const y1 = centerY + radius * Math.sin(startAngleRad);
+    const x2 = centerX + radius * Math.cos(endAngleRad);
+    const y2 = centerY + radius * Math.sin(endAngleRad);
     
     const pathData = [
-      'M', 200, 200,
+      'M', centerX, centerY,
       'L', x1, y1,
-      'A', 180, 180, 0, largeArcFlag, 1, x2, y2,
+      'A', radius, radius, 0, largeArcFlag, 1, x2, y2,
       'Z'
     ].join(' ');
 
     // Calculate text position
     const textAngle = startAngle + angle / 2;
     const textAngleRad = (textAngle * Math.PI) / 180;
-    const textRadius = 120;
-    const textX = 200 + textRadius * Math.cos(textAngleRad);
-    const textY = 200 + textRadius * Math.sin(textAngleRad);
+    const textRadius = 160;
+    const textX = centerX + textRadius * Math.cos(textAngleRad);
+    const textY = centerY + textRadius * Math.sin(textAngleRad);
 
-    const segmentColor = prize.color || colors[index % colors.length];
+    const segmentColor = colors[index % colors.length];
     
     return (
       <g key={prize.id}>
@@ -151,8 +166,8 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ prizes, onWin, colors: propColors
         <path
           d={pathData}
           fill={`url(#segmentGradient${index})`}
-          stroke="var(--wheel-border)"
-          strokeWidth="2"
+          stroke="#FFFFFF"
+          strokeWidth="3"
           filter="url(#segmentShadow)"
         />
         
@@ -160,7 +175,7 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ prizes, onWin, colors: propColors
         <path
           d={pathData}
           fill="none"
-          stroke="rgba(255, 255, 255, 0.3)"
+          stroke="rgba(255, 255, 255, 0.8)"
           strokeWidth="1"
           strokeDasharray="0"
         />
@@ -169,20 +184,20 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ prizes, onWin, colors: propColors
         <path
           d={pathData}
           fill="none"
-          stroke="rgba(0, 0, 0, 0.6)"
+          stroke="rgba(255, 255, 255, 0.5)"
           strokeWidth="0.5"
           strokeDasharray="3,2"
           opacity="0.7"
         />
 
-        {/* Clean text in white only */}
+        {/* Clean text in black */}
         <text
           x={textX}
           y={textY}
-          fill="white"
-          fontSize="22"
+          fill="black"
+          fontSize="45"
           fontWeight="bold"
-          fontFamily="var(--font-oswald), sans-serif"
+          fontFamily="var(--font-space-grotesk), sans-serif"
           textAnchor="middle"
           dominantBaseline="central"
           transform={`rotate(${textAngle}, ${textX}, ${textY})`}
@@ -208,162 +223,206 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ prizes, onWin, colors: propColors
     setIsSpinning(true);
 
     try {
-      // Call the API to get the winning prize
+      // 🎯 PASO 1: Llamar a la API para determinar qué mesa ganó
+      console.log('🎲 Llamando a la API para determinar el premio...');
       const spinResponse = await spinRuleta(ruletaId);
       
-      if (spinResponse.exito) {
-        console.log('🎲 API Spin Response:', spinResponse);
-        
-        // Find the exact matching prize and its index
-        const winningIndex = findPrizeIndexById(spinResponse.premio_ganado.id);
-        const winningPrize = prizes[winningIndex];
-        
-        console.log('🧪 TEST: Winning index:', winningIndex, 'Prize:', winningPrize.text);
-        console.log('🧪 TEST: API Prize ID:', spinResponse.premio_ganado.id, 'Name:', spinResponse.premio_ganado.nombre);
-        
-        // Calculate the center angle of the winning segment (in math coordinates)
-        const segmentCenterAngle = (winningIndex * segmentAngle) + (segmentAngle / 2);
-        
-        // CRITICAL: Account for current wheel position
-        const currentNormalizedRotation = ((rotation % 360) + 360) % 360;
-        
-        // Current position of the winning segment center after existing rotation
-        const currentSegmentPosition = (segmentCenterAngle + currentNormalizedRotation) % 360;
-        
-        // Calculate how much more rotation is needed to align with pointer at 270°
-        let additionalRotation = 270 - currentSegmentPosition;
-        
-        // Normalize to positive rotation for visual effect
-        while (additionalRotation <= 0) {
-          additionalRotation += 360;
-        }
-        
-        // Add multiple full rotations for visual effect (minimum 10 full rotations)
-        const minRotation = 3600; // 10 full rotations
-        const randomExtraRotation = Math.floor(Math.random() * 10) * 360; // Only full rotations to maintain alignment
-        const finalRotation = rotation + minRotation + additionalRotation + randomExtraRotation;
-
-        console.log('🎯 Rotation calculation:', {
-          winningIndex,
-          segmentCenterAngle,
-          currentNormalizedRotation,
-          currentSegmentPosition,
-          additionalRotation,
-          finalRotation: finalRotation % 360,
-          expectedPrize: winningPrize.text,
-        });
-
-        // Smooth animation using requestAnimationFrame
-        const startTime = Date.now();
-        const startRotation = rotation;
-        const duration = 4500; // 4.5 seconds
-        
-        const animate = () => {
-          const elapsed = Date.now() - startTime;
-          const progress = Math.min(elapsed / duration, 1);
-          
-          // Use easeOutQuart for smooth deceleration
-          const easeOutQuart = 1 - Math.pow(1 - progress, 4);
-          const currentRotation = startRotation + (finalRotation - startRotation) * easeOutQuart;
-          
-          setRotation(currentRotation);
-          
-          if (progress < 1) {
-            animationRef.current = requestAnimationFrame(animate);
-          } else {
-            // Animation complete
-            setRotation(finalRotation);
-          }
-        };
-        
-        animationRef.current = requestAnimationFrame(animate);
-
-        // Trigger callback after animation completes
-        setTimeout(() => {
-          // Verify the landing position
-          const actualLandingIndex = verifyLandingSegment(finalRotation);
-          const actualLandingPrize = prizes[actualLandingIndex];
-          
-          // Check if we landed where we intended
-          if (actualLandingIndex !== winningIndex) {
-            console.warn('⚠️ Landing mismatch!', {
-              intended: winningIndex,
-              actual: actualLandingIndex,
-              intendedPrize: winningPrize.text,
-              actualPrize: actualLandingPrize?.text
-            });
-          } else {
-            console.log('✅ Perfect landing! Prize matches expectation.');
-          }
-          
-          setIsSpinning(false);
-          
-          // Play appropriate sound and show effects based on positive field
-          const isPositive = spinResponse.premio_ganado.positive;
-          console.log('🎵 Prize is positive:', isPositive);
-          
-          // Always use the API prize data for absolute accuracy
-          const prizeToShow: Prize = {
-            id: spinResponse.premio_ganado.id.toString(),
-            text: spinResponse.premio_ganado.nombre,
-            color: winningPrize.color, // Keep the visual color
-            probability: spinResponse.premio_ganado.probabilidad,
-            positive: isPositive
-          };
-          
-          console.log('🏆 Final prize to show (from API):', prizeToShow);
-          onWin(prizeToShow, isPositive);
-        }, 4500);
-      } else {
-        // Handle API error
+      console.log('✅ Respuesta de la API:', spinResponse);
+      
+      if (!spinResponse.exito || !spinResponse.premio_ganado) {
+        console.error('❌ Error de la API:', spinResponse.mensaje);
         setIsSpinning(false);
-        console.error('Spin API returned error:', spinResponse.mensaje);
+        
+        // Mostrar mensaje de error más elegante
+        const errorMessage = spinResponse.mensaje || 'Error al girar la ruleta';
+        
+        // Crear un modal temporal de error
+        const errorDiv = document.createElement('div');
+        errorDiv.style.cssText = `
+          position: fixed;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          color: white;
+          padding: 2rem 3rem;
+          border-radius: 1rem;
+          box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+          z-index: 9999;
+          text-align: center;
+          font-family: var(--font-space-grotesk), sans-serif;
+          max-width: 90%;
+          animation: fadeIn 0.3s ease-out;
+        `;
+        errorDiv.innerHTML = `
+          <div style="font-size: 3rem; margin-bottom: 1rem;">⚠️</div>
+          <div style="font-size: 1.5rem; font-weight: bold; margin-bottom: 1rem;">¡Atención!</div>
+          <div style="font-size: 1.2rem; margin-bottom: 1.5rem;">${errorMessage}</div>
+          <button onclick="this.parentElement.remove()" style="
+            background: white;
+            color: #667eea;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            font-family: var(--font-space-grotesk), sans-serif;
+          ">Entendido</button>
+        `;
+        document.body.appendChild(errorDiv);
+        
+        // Auto-remover después de 5 segundos
+        setTimeout(() => {
+          if (errorDiv.parentElement) {
+            errorDiv.remove();
+          }
+        }, 5000);
+        
+        return;
       }
-    } catch (error) {
-      // Handle network or other errors
-      console.error('Error spinning wheel:', error);
-      setIsSpinning(false);
-      
-      // Fallback to random spin if API fails
-      const minRotation = 3600;
-      const randomRotation = Math.random() * 360;
-      const finalRotation = rotation + minRotation + randomRotation;
-      
-      const normalizedRotation = (finalRotation % 360);
-      const pointerPosition = (270 - normalizedRotation + 360) % 360;
-      const winningIndex = Math.floor(pointerPosition / segmentAngle) % prizes.length;
-      const winningPrize = prizes[winningIndex];
 
-      // Smooth animation for fallback case too
-      const startTime = Date.now();
-      const startRotation = rotation;
-      const duration = 4500;
+      // Guardar referencia al premio ganado (ya verificado que no es null)
+      const premioGanado = spinResponse.premio_ganado;
       
-      const animate = () => {
-        const elapsed = Date.now() - startTime;
-        const progress = Math.min(elapsed / duration, 1);
-        
-        // Use easeOutQuart for smooth deceleration
-        const easeOutQuart = 1 - Math.pow(1 - progress, 4);
-        const currentRotation = startRotation + (finalRotation - startRotation) * easeOutQuart;
-        
-        setRotation(currentRotation);
-        
-        if (progress < 1) {
-          animationRef.current = requestAnimationFrame(animate);
-        } else {
-          // Animation complete
-          setRotation(finalRotation);
+      // 🎯 PASO 2: Extraer el número de mesa del premio ganado
+      // La API devuelve un premio con 'nombre' como "Mesa 1", "Mesa 2", etc.
+      const mesaMatch = premioGanado.nombre.match(/Mesa (\d+)/i);
+      const mesaGanadora = mesaMatch ? parseInt(mesaMatch[1], 10) : premioGanado.id;
+
+      console.log('🎯 Mesa ganadora de la API:', mesaGanadora);
+      
+      // 🎯 PASO 3: Buscar todos los segmentos que corresponden a esa mesa
+      const matchingIndices: number[] = [];
+      prizes.forEach((prize, index) => {
+        const prizeMatch = prize.id.match(/mesa-(\d+)/);
+        if (prizeMatch) {
+          const mesaNum = parseInt(prizeMatch[1], 10);
+          if (mesaNum === mesaGanadora) {
+            matchingIndices.push(index);
+          }
         }
+      });
+
+      if (matchingIndices.length === 0) {
+        console.error('❌ No se encontró segmento para la mesa:', mesaGanadora);
+        setIsSpinning(false);
+        alert(`No se encontró el segmento para Mesa ${mesaGanadora}`);
+        return;
+      }
+
+      // Si hay múltiples segmentos de la misma mesa, elegir uno al azar
+      const targetIndex = matchingIndices[Math.floor(Math.random() * matchingIndices.length)];
+      const winningPrize = prizes[targetIndex];
+
+      console.log('🎯 Segmento objetivo determinado:', {
+        mesaGanadora,
+        matchingIndices,
+        targetIndex,
+        prizeId: winningPrize.id,
+        prizeName: winningPrize.text,
+        totalSegments: prizes.length
+      });
+
+    // 🎯 Calcular la rotación necesaria para caer en ese segmento
+    // El pointer está en el tope (270° en coordenadas matemáticas)
+    const pointerAngle = 270;
+    
+    // Calcular el ángulo central del segmento objetivo (en coordenadas matemáticas)
+    // Segmento 0 empieza en 0°, su centro está en segmentAngle/2
+    const segmentCenterAngle = (targetIndex * segmentAngle) + (segmentAngle / 2);
+    
+    // La rotación actual normalizada
+    const currentNormalizedRotation = ((rotation % 360) + 360) % 360;
+    
+    // Después de rotar, queremos que: (segmentCenterAngle + finalRotation) % 360 = pointerAngle
+    // Por lo tanto: finalRotation = (pointerAngle - segmentCenterAngle) % 360
+    // Pero como partimos de currentNormalizedRotation, necesitamos:
+    let targetRotation = (pointerAngle - segmentCenterAngle + 360) % 360;
+    
+    // Ajustar para que sea relativo a la rotación actual
+    if (targetRotation < currentNormalizedRotation) {
+      targetRotation += 360;
+    }
+    targetRotation = targetRotation - currentNormalizedRotation;
+    
+    // Agregar varias vueltas completas para el efecto visual
+    const minRotation = 3600; // 10 vueltas completas
+    const randomExtraRotations = Math.floor(Math.random() * 5) * 360; // 0-5 vueltas extra
+    const finalRotation = rotation + minRotation + randomExtraRotations + targetRotation;
+
+    console.log('🎲 Calculated rotation:', {
+      currentRotation: rotation,
+      pointerAngle,
+      segmentCenterAngle,
+      targetRotation,
+      minRotation,
+      randomExtraRotations,
+      finalRotation,
+      finalAngle: finalRotation % 360
+    });
+
+    // 🎯 Animar la ruleta hasta la posición calculada
+    const startTime = Date.now();
+    const startRotation = rotation;
+    const duration = 4500; // 4.5 segundos
+    
+    const animate = () => {
+      const elapsed = Date.now() - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      
+      // Use easeOutQuart for smooth deceleration
+      const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+      const currentRotation = startRotation + (finalRotation - startRotation) * easeOutQuart;
+      
+      setRotation(currentRotation);
+      
+      if (progress < 1) {
+        animationRef.current = requestAnimationFrame(animate);
+      } else {
+        // Animation complete
+        setRotation(finalRotation);
+      }
+    };
+    
+    animationRef.current = requestAnimationFrame(animate);
+
+    // 🎯 Después de la animación, verificar y mostrar el resultado
+    setTimeout(() => {
+      // Verificar que efectivamente cayó en el lugar correcto
+      const landingIndex = verifyLandingSegment(finalRotation);
+      
+      console.log('🎯 Wheel stopped at:', {
+        landingIndex,
+        expectedIndex: targetIndex,
+        match: landingIndex === targetIndex,
+        segmentId: prizes[landingIndex].id,
+        prizeName: prizes[landingIndex].text,
+        finalRotation: finalRotation % 360
+      });
+
+      // Usar el premio del segmento donde cayó con los datos de la API
+      const prizeToShow: Prize = {
+        id: winningPrize.id,
+        text: winningPrize.text,
+        color: winningPrize.color,
+        probability: winningPrize.probability,
+        positive: premioGanado.positive !== undefined 
+          ? premioGanado.positive 
+          : true
       };
       
-      animationRef.current = requestAnimationFrame(animate);
+      // Actualizar la última mesa
+      setLastMesa(winningPrize.text);
       
-      setTimeout(() => {
-        setIsSpinning(false);
-        // In fallback mode, assume it's positive
-        onWin(winningPrize, true);
-      }, 4500);
+      setIsSpinning(false);
+      onWin(prizeToShow, premioGanado.positive);
+    }, duration);
+
+    } catch (error) {
+      console.error('❌ Error al girar la ruleta:', error);
+      setIsSpinning(false);
+      alert('Error de conexión. Por favor, intenta de nuevo.');
     }
   };
 
@@ -379,7 +438,7 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ prizes, onWin, colors: propColors
         {/* Main loading spinner */}
         <div className="relative w-64 h-64 mb-8">
           {/* Outer rotating ring */}
-          <div className="absolute inset-0 rounded-full border-8 border-white-500/30 border-t-white-500 animate-spin"></div>
+          <div className="absolute inset-0 rounded-full border-[16px] border-white-500/30 border-t-white-500 animate-spin"></div>
           
           {/* Inner rotating ring */}
           <div className="absolute inset-4 rounded-full border-6 border-white-400/40 border-t-white-400 animate-spin" style={{ animationDirection: 'reverse', animationDuration: '1.5s' }}></div>
@@ -391,7 +450,7 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ prizes, onWin, colors: propColors
               <div className="text-6xl mb-4 animate-bounce">🎰</div>
               
               {/* Loading text */}
-              <div className="text-2xl font-bold text-app-primary font-oswald tracking-wider">
+              <div className="text-2xl font-bold text-app-primary tracking-wider" style={{ fontFamily: 'var(--font-space-grotesk)' }}>
                 CARGANDO RULETA
               </div>
               
@@ -411,7 +470,7 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ prizes, onWin, colors: propColors
         </div>
         
         {/* Loading text */}
-        <p className="text-app-primary text-lg font-oswald mt-6 animate-pulse">
+        <p className="text-app-primary text-lg mt-6 animate-pulse" style={{ fontFamily: 'var(--font-space-grotesk)' }}>
           Preparando la experiencia de casino...
         </p>
       </div>
@@ -424,54 +483,52 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ prizes, onWin, colors: propColors
   }
 
   return (
-    <div className="flex flex-col items-center justify-center h-full w-[80vw] max-w-[80vw]">
+    <div className="flex flex-col items-center justify-between h-full w-full max-w-full">
       {/* Ambient glow effect */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
         <div className="w-96 h-96 rounded-full bg-gradient-radial from-black-500/20 via-black-600/10 to-transparent blur-3xl opacity-60 animate-pulse"></div>
       </div>
-      
-      {/* Title above the wheel */}
-      <div className="text-center mb-2 z-10">
-        <h2 className="text-6xl font-bold text-app-primary tracking-wider mt-10" style={{ fontFamily: 'var(--font-montserrat)' }}>
-          GIRÁ PARA ELEGIR TU MESA
-        </h2>
+      {/* Contenedor superior para logo y ruleta */}
+      <div className="flex flex-col items-center justify-center flex-1 w-full">
+    {/* Logo y título */}
+      <div className="text-center mb-2 z-10 flex-shrink-0 flex flex-col items-center">
+        {/* Logo EOY */}
+        <div className="mb-4">  
+          <img src="/logo_EOY.png" alt="Logo EOY" className="w-120 h-auto object-contain" />
+        </div>
+        
+        {/* Texto curvo */}
+        <svg width="100%" height="250" viewBox="0 0 1200 250" className="mx-auto" preserveAspectRatio="xMidYMid meet">
+          <defs>
+            <path 
+              id="curvedText" 
+              d="M 100 200 Q 600 40 1100 200" 
+              fill="transparent"
+            />
+          </defs>
+          <text 
+            className="text-7xl font-bold tracking-wider"
+            style={{ fontFamily: 'var(--font-space-grotesk)', fill: '#000000' }}
+          >
+            <textPath href="#curvedText" startOffset="50%" textAnchor="middle">
+              Girá para elegir tu mesa
+            </textPath>
+          </text>
+        </svg>
       </div>
       
-      <div className={`relative wheel-container flex-1 flex items-center justify-center z-10 w-full ${isSpinning ? 'wheel-spinning' : ''}`}>
+      <div className={`relative wheel-container flex-1 flex items-center justify-center z-10 w-full min-h-0 ${isSpinning ? 'wheel-spinning' : ''}`}>
         {/* Enhanced wheel container with floating effect */}
         <div className="relative transform transition-all duration-300">
-          {/* Ultra elegant casino pointer with advanced shadows */}
-          <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-3 z-20">
-            <div className="relative">
-              {/* Shadow layer */}
-              <div className="absolute top-1 left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[24px] border-r-[24px] border-t-[50px] border-l-transparent border-r-transparent border-t-black/40 blur-sm"></div>
-              
-              {/* Main pointer with gradient and glow */}
-              <div className="relative">
-                <div className="w-0 h-0 border-l-[24px] border-r-[24px] border-t-[50px] border-l-transparent border-r-transparent drop-shadow-2xl"
-                  style={{
-                    borderTopColor: 'var(--wheel-pointer)',
-                    filter: 'drop-shadow(0 0 10px rgba(255, 217, 0, 0)) drop-shadow(0 4px 20px rgba(0, 0, 0, 0.6))'
-                  }}></div>
-                
-                {/* Inner golden gradient */}
-                <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[20px] border-r-[20px] border-t-[42px] border-l-transparent border-r-transparent"
-                  style={{ borderTopColor: 'var(--wheel-center-border)' }}></div>
-                
-                {/* Highlight effect */}
-                <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[16px] border-r-[16px] border-t-[35px] border-l-transparent border-r-transparent opacity-60"
-                  style={{ borderTopColor: 'var(--wheel-center-border)' }}></div>
-              </div>
-            </div>
-          </div>
-          
           <svg
             ref={wheelRef}
-            width="min(70vw, 80vh, 900px)"
-            height="min(70vw, 80vh, 900px)"
-            viewBox="0 0 400 400"
+            width="min(90vw, 70vh, 1400px)"
+            height="min(90vw, 70vh, 1400px)"
+            viewBox="-10 -10 540 540"
             className="max-w-full max-h-full"
             style={{
+              minWidth: 0,
+              minHeight: 0,
               transform: `rotate(${rotation}deg)`,
               transition: 'none', // We handle animation with requestAnimationFrame
               willChange: 'transform',
@@ -511,12 +568,12 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ prizes, onWin, colors: propColors
           
           {/* Outer decorative ring with golden metallic effect */}
           <circle
-            cx="200"
-            cy="200"
-            r="195"
+            cx="260"
+            cy="260"
+            r="255"
             fill="url(#outerRingGradient)"
             stroke="var(--wheel-border)"
-            strokeWidth="4"
+            strokeWidth="25"
             opacity="0.9"
           />
           
@@ -524,8 +581,8 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ prizes, onWin, colors: propColors
           {Array.from({ length: 24 }, (_, i) => {
             const angle = (i * 360) / 24;
             const angleRad = (angle * Math.PI) / 180;
-            const lightX = 200 + 190 * Math.cos(angleRad);
-            const lightY = 200 + 190 * Math.sin(angleRad);
+            const lightX = 260 + 250 * Math.cos(angleRad);
+            const lightY = 260 + 250 * Math.sin(angleRad);
             
             return (
               <g key={`light-${i}`} className="casino-light">
@@ -561,9 +618,9 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ prizes, onWin, colors: propColors
           
           {/* Inner base ring */}
           <circle
-            cx="200"
-            cy="200"
-            r="185"
+            cx="260"
+            cy="260"
+            r="245"
             fill="url(#innerRingGradient)"
             stroke="#333333"
             strokeWidth="1"
@@ -574,9 +631,9 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ prizes, onWin, colors: propColors
           
           {/* Enhanced center circle with metallic effect */}
           <circle
-            cx="200"
-            cy="200"
-            r="30"
+            cx="260"
+            cy="260"
+            r="40"
             fill="url(#centerGradient)"
             stroke="var(--wheel-border)"
             strokeWidth="3"
@@ -585,9 +642,9 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ prizes, onWin, colors: propColors
           
           {/* Inner center ring */}
           <circle
-            cx="200"
-            cy="200"
-            r="22"
+            cx="260"
+            cy="260"
+            r="30"
             fill="none"
             stroke="rgba(255, 255, 255, 0.4)"
             strokeWidth="1"
@@ -595,9 +652,9 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ prizes, onWin, colors: propColors
           
           {/* Center highlight */}
           <circle
-            cx="196"
-            cy="196"
-            r="8"
+            cx="256"
+            cy="256"
+            r="10"
             fill="rgba(255, 255, 255, 0.3)"
             opacity="0.6"
           />
@@ -618,8 +675,44 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ prizes, onWin, colors: propColors
           </defs>
           </svg>
 
+          {/* Ultra elegant casino pointer - static, positioned at top center of wheel, pointing down */}
+          <div 
+            className="absolute left-1/2 transform -translate-x-1/2 z-30 pointer-events-none"
+            style={{
+              top: '8%',
+              width: '64px',
+              height: '66px',
+              filter: 'drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3))',
+            }}
+          >
+            <div className="relative">
+              {/* Black border for 3D effect */}
+              <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[40px] border-r-[40px] border-t-[80px] border-l-transparent border-r-transparent border-t-black"></div>
+              
+              {/* Shadow layer */}
+              <div className="absolute top-1 left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[32px] border-r-[32px] border-t-[66px] border-l-transparent border-r-transparent border-t-black/40 blur-sm"></div>
+              
+              {/* Main pointer */}
+              <div className="relative">
+                <div className="w-0 h-0 border-l-[32px] border-r-[32px] border-t-[66px] border-l-transparent border-r-transparent drop-shadow-2xl"
+                  style={{
+                    borderTopColor: 'var(--wheel-pointer)',
+                    filter: 'drop-shadow(0 0 10px rgba(255, 217, 0, 0)) drop-shadow(0 4px 20px rgba(0, 0, 0, 0.6))'
+                  }}></div>
+                
+                {/* Inner golden gradient */}
+                <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[26px] border-r-[26px] border-t-[56px] border-l-transparent border-r-transparent"
+                  style={{ borderTopColor: 'var(--wheel-center-border)' }}></div>
+                
+                {/* Highlight effect */}
+                <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[22px] border-r-[22px] border-t-[46px] border-l-transparent border-r-transparent opacity-60"
+                  style={{ borderTopColor: 'var(--wheel-center-border)' }}></div>
+              </div>
+            </div>
+          </div>
+
           {/* Ultra elegant center logo with advanced effects */}
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 rounded-full z-10 flex items-center justify-center">
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-28 h-28 sm:w-32 sm:h-32 md:w-36 md:h-36 rounded-full z-10 flex items-center justify-center">
             {/* Main logo container */}
             <div className="relative w-full h-full rounded-full overflow-hidden border-4"
               style={{
@@ -635,13 +728,13 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ prizes, onWin, colors: propColors
               }}>
               
               {/* Inner gradient overlay */}
-              <div className="absolute inset-0 bg-gradient-to-br from-transparent via-white/10 to-black/20 rounded-full"></div>
+              <div className="absolute inset-0 bg-white rounded-full border-8 border-black"></div>
               
               {/* Logo image */}
               <img 
-                src={logo || "/images/d3.jpg"} 
+                src={"/images/logoruleta.png"} 
                 alt="Logo" 
-                className="w-full h-full rounded-full object-contain relative z-10 p-2" 
+                className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-32 h-32 rounded-full object-contain z-10" 
               />
               
               {/* Shine effect */}
@@ -650,77 +743,70 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ prizes, onWin, colors: propColors
           </div>
         </div>
       </div>
+      </div>
 
-      {/* Elegant casino spin button with liquid glass effect */}
-      <div className="w-full px-6 pb-6">
-        <button
-          onClick={spinWheel}
-          disabled={isSpinning || prizes.length === 0}
-          className={`
-            relative w-full py-8 px-8 rounded-2xl font-bold
-            transform transition-all duration-500 ease-out overflow-hidden group
-            ${isSpinning || prizes.length === 0 
-              ? 'bg-gray-400 text-gray-600 cursor-not-allowed scale-95 opacity-60' 
-              : 'hover:-translate-y-1 active:translate-y-1 hover:scale-[1.02]'
-            }
-          `}
-          style={{
-            background: isSpinning || prizes.length === 0 
-              ? undefined 
-              : 'rgba(255, 255, 255, 0.1)',
-            backdropFilter: 'blur(10px)',
-            border: isSpinning || prizes.length === 0 ? '4px solid rgba(200, 200, 200, 0.3)' : '4px solid rgba(255, 255, 255, 0.3)',
-            boxShadow: isSpinning || prizes.length === 0
-              ? 'none'
-              : '0 8px 32px 0 rgba(0, 0, 0, 0.3), inset 0 0 20px rgba(255, 255, 255, 0.1)'
-          }}
-        >
-          {/* Efecto de brillo líquido */}
-          {!isSpinning && prizes.length > 0 && (
-            <div 
-              className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-              style={{
-                background: 'radial-gradient(circle at center, rgba(255, 255, 255, 0.3) 0%, transparent 70%)',
-                animation: 'liquidMove 3s ease-in-out infinite'
-              }}
-            />
-          )}
+      {/* Botón estilo imagen con ícono y texto */}
+      <div className="w-full px-6 pb-8 flex-shrink-0 flex flex-col items-center gap-4">
+        <div className="relative">
+          {/* Ícono de ruleta sobresaliente - clickeable */}
+          <button
+            onClick={spinWheel}
+            disabled={isSpinning || prizes.length === 0}
+            className={`absolute left-0 top-1/2 -translate-y-1/2 -translate-x-12 z-10 flex-shrink-0 w-60 h-60 rounded-full bg-transparent flex items-center justify-center
+              transform transition-all duration-300 ease-out
+              ${isSpinning || prizes.length === 0 
+                ? 'cursor-not-allowed' 
+                : 'hover:scale-110 active:scale-100 cursor-pointer active:brightness-95'
+              }
+            `}
+            style={{
+              border: 'none',
+            }}
+          >
+            {isSpinning ? (
+              <svg className="animate-spin" width="200" height="200" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="10" stroke="transparent" strokeWidth="2"/>
+                <path d="M12 6V12L16 14" stroke="transparent" strokeWidth="2" strokeLinecap="round"/>
+              </svg>
+            ) : (
+              <img src="/iconoruleta.png" alt="Ruleta" width="280" height="280" className="object-contain" />
+            )}
+          </button>
           
-          {/* Reflejo superior */}
-          {!isSpinning && prizes.length > 0 && (
-            <div 
-              className="absolute top-0 left-0 right-0 h-1/3 opacity-30 pointer-events-none"
-              style={{
-                background: 'linear-gradient(180deg, rgba(255, 255, 255, 0.4) 0%, transparent 100%)',
-                borderRadius: '1rem 1rem 0 0'
-              }}
-            />
-          )}
-          
-          <span className="flex items-center justify-center space-x-4 relative z-10 text-app-primary">
-            <span className={isSpinning ? 'animate-spin' : ''}>
-              {isSpinning ? (
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
-                  <path d="M12 6V12L16 14" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                </svg>
-              ) : (
-                <img src="/dice.png" alt="Dado" width="48" height="48" className="object-contain" />
-              )}
+          <button
+            onClick={spinWheel}
+            disabled={isSpinning || prizes.length === 0}
+            className={`
+              flex items-center gap-6 pl-90 pr-50 py-18 font-bold
+              transform transition-all duration-300 ease-out rounded-full
+              ${isSpinning || prizes.length === 0 
+                ? 'bg-gray-400 text-black font-bold cursor-not-allowed opacity-60' 
+                : 'shadow-lg hover:shadow-xl'
+              }
+            `}
+            style={{
+              borderTop: '6px solid #000000',
+              borderLeft: '6px solid #000000',
+              borderRight: '6px solid #000000',
+              borderBottom: '12px solid #000000',
+              backgroundColor: isSpinning || prizes.length === 0 ? undefined : '#A4C9DF',
+            }}
+          >
+            {/* Texto */}
+            <span className="text-7xl font-bold text-black tracking-wide" style={{ fontFamily: 'var(--font-space-grotesk)' }}>
+              {isSpinning ? 'Girando...' : 'Girar Ruleta'}
             </span>
-            <span className="text-4xl tracking-wider" style={{ fontFamily: 'var(--font-montserrat)' }}>
-              {isSpinning ? 'GIRANDO...' : 'GIRAR RULETA'}
-            </span>
-          </span>
-          
-          <style jsx>{`
-            @keyframes liquidMove {
-              0%, 100% { transform: translate(0%, 0%) scale(1); }
-              33% { transform: translate(30%, -30%) scale(1.2); }
-              66% { transform: translate(-30%, 30%) scale(1.1); }
-            }
-          `}</style>
-        </button>
+          </button>
+        </div>
+
+        {/* Última mesa registro */}
+        {lastMesa && (
+          <div className="bg-black/80 backdrop-blur-sm px-8 py-4 rounded-full border-4 border-white shadow-lg">
+            <p className="text-white text-3xl font-bold tracking-wide" style={{ fontFamily: 'var(--font-space-grotesk)' }}>
+              Última mesa: <span className="text-[#68DEBF]">{lastMesa}</span>
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );

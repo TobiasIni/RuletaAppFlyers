@@ -36,48 +36,25 @@ export default function Ruleta({ juegoId, onBack }: RuletaProps) {
         const config = await getRuletaConfig(juegoId);
         setRuletaConfig(config);
         
-        // Transform API prizes to Prize format
-        const transformedPrizes: Prize[] = config.premios
-          .filter(premio => premio.activo)
-          .sort((a, b) => a.id - b.id)
-          .map((premio, index) => ({
-            id: premio.id.toString(),
-            text: premio.nombre,
-            color: '', // Will be assigned from company colors
-            probability: premio.probabilidad,
-            positive: premio.positive,
-          }));
+        // Create 8 segments for the wheel
+        // Mesa 1, Mesa 2, Mesa 1 (repetida), Mesa 2 (repetida), Mesa 3, Mesa 4, Mesa 5, Mesa 6
+        const finalPrizes: Prize[] = [
+          { id: 'mesa-1-a', text: 'Mesa 1', color: '', probability: 12.5, positive: true },
+          { id: 'mesa-2-a', text: 'Mesa 2', color: '', probability: 12.5, positive: true },
+          { id: 'mesa-1-b', text: 'Mesa 1', color: '', probability: 12.5, positive: true },
+          { id: 'mesa-2-b', text: 'Mesa 2', color: '', probability: 12.5, positive: true },
+          { id: 'mesa-3', text: 'Mesa 3', color: '', probability: 12.5, positive: true },
+          { id: 'mesa-4', text: 'Mesa 4', color: '', probability: 12.5, positive: true },
+          { id: 'mesa-5', text: 'Mesa 5', color: '', probability: 12.5, positive: true },
+          { id: 'mesa-6', text: 'Mesa 6', color: '', probability: 12.5, positive: true },
+        ];
 
-        // Ensure we always have exactly 8 prizes by repeating them
-        const targetPrizeCount = 8;
-        const finalPrizes: Prize[] = [];
-        
-        if (transformedPrizes.length === 0) {
-          // If no prizes from API, create default ones
-          for (let i = 0; i < targetPrizeCount; i++) {
-            finalPrizes.push({
-              id: `default-${i}`,
-              text: 'Premio',
-              color: '',
-              probability: 100 / targetPrizeCount,
-            });
-          }
-        } else {
-          // Repeat prizes until we have exactly 8
-          for (let i = 0; i < targetPrizeCount; i++) {
-            const sourcePrize = transformedPrizes[i % transformedPrizes.length];
-            finalPrizes.push({
-              ...sourcePrize,
-              id: `${sourcePrize.id}-${i}`, // Make sure each has a unique ID
-            });
-          }
-        }
-
-        // Create color array from company colors
+        // Create color array - using 4 colors that match SpinWheel default
         const colors = [
-          config.company.color_primario,
-          config.company.color_secundario,
-          config.company.color_terciario,
+          '#F17586', // Pink
+          '#68DEBF', // Teal
+          '#63D0DF', // Light Blue
+          '#E9EAEA', // Light Gray
         ];
 
         // Assign colors to prizes in a cycling pattern
@@ -105,6 +82,13 @@ export default function Ruleta({ juegoId, onBack }: RuletaProps) {
   }, [juegoId]);
 
   const handleWin = (prize: Prize, isPositive?: boolean) => {
+    // La API ya validó que este premio está disponible
+    // No necesitamos validar nada más en el frontend
+    console.log('✅ Premio recibido de la API:', {
+      prize,
+      isPositive,
+    });
+    
     setWinner({...prize, positive: isPositive});
     setShowWinnerModal(true);
   };
@@ -151,21 +135,16 @@ export default function Ruleta({ juegoId, onBack }: RuletaProps) {
     <div className="h-full w-full flex flex-col overflow-hidden relative">
       {/* Error message */}
       {error && (
-        <div className="absolute top-20 left-1/2 transform -translate-x-1/2 z-30 bg-red-600 text-app-primary px-4 py-2 rounded-lg">
+        <div className="absolute top-20 left-1/2 transform -translate-x-1/2 z-30 bg-red-600 text-app-primary px-4 py-2 rounded-lg shadow-lg">
           {error}
         </div>
       )}
 
       {/* Main Wheel Container - Takes most of the screen */}
-      <div className="flex-1 flex items-center justify-center p-2">
+      <div className="flex-1 flex items-center justify-center p-2 max-h-full overflow-hidden">
         <SpinWheel 
           prizes={prizes} 
-          onWin={handleWin} 
-          colors={ruletaConfig ? [
-            ruletaConfig.company.color_primario,
-            ruletaConfig.company.color_secundario,
-            ruletaConfig.company.color_terciario,
-          ] : undefined}
+          onWin={handleWin}
           logo={ruletaConfig?.company.logo}
           ruletaId={juegoId}
         />

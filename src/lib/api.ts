@@ -1,161 +1,182 @@
 import { Company, TriviaConfig, MemotestConfig, RuletaConfig, RuletaPremio } from '@/types/api';
-import { getConfig } from '@/config/constants';
 
+// Función mock que devuelve datos estáticos de la empresa
 export async function getCompanyData(): Promise<Company> {
-  const { companyId, apiBaseUrl } = getConfig();
+  console.log('🔧 Modo sin API - Devolviendo datos mock de empresa');
   
-  console.log('🔧 Variables de entorno:');
-  console.log('COMPANY_ID:', process.env.COMPANY_ID || 'No configurado (usando valor por defecto: 5)');
-  console.log('API_BASE_URL:', process.env.API_BASE_URL || 'No configurado (usando valor por defecto)');
-  console.log('📋 Configuración final:', { companyId, apiBaseUrl });
+  // Simular delay de red
+  await new Promise(resolve => setTimeout(resolve, 100));
   
-  const url = `${apiBaseUrl}/companies/${companyId}`;
-  console.log('🌐 URL de la API:', url);
-
-  try {
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: {
-        'accept': 'application/json',
-      },
-    });
-
-    console.log('📡 Respuesta de la API:', response.status, response.statusText);
-
-    if (!response.ok) {
-      throw new Error(`Error al obtener los datos de la empresa: ${response.status} ${response.statusText}`);
-    }
-
-    const data = await response.json();
-    console.log('✅ Datos recibidos:', data);
-    return data;
-  } catch (error) {
-    console.error('❌ Error al conectar con la API:', error);
-    throw error;
-  }
+  const mockData: Company = {
+    id: 1,
+    nombre: 'Casino D3',
+    background: '/background.png',
+    logo: '/images/d3.jpg',
+    color_primario: '#CD0303',
+    color_secundario: '#FFD700',
+    color_terciario: '#2F4F4F',
+    color_cuarteario: '#F08097',
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    imagenes: [],
+    juegos_habilitados: [],
+  };
+  
+  console.log('✅ Datos mock devueltos:', mockData);
+  return mockData;
 }
 
 export async function getTriviaConfig(triviaId: number): Promise<TriviaConfig> {
-  const { apiBaseUrl } = getConfig();
+  console.log('🔧 Modo sin API - Devolviendo configuración mock de trivia:', triviaId);
   
-  console.log('🔧 Obteniendo configuración de trivia:', triviaId);
+  // Simular delay de red
+  await new Promise(resolve => setTimeout(resolve, 100));
   
-  const url = `${apiBaseUrl}/trivias/${triviaId}/config`;
-  console.log('🌐 URL de la API:', url);
-
-  try {
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: {
-        'accept': 'application/json',
-      },
-    });
-
-    console.log('📡 Respuesta de la API:', response.status, response.statusText);
-
-    if (!response.ok) {
-      throw new Error(`Error al obtener la configuración de la trivia: ${response.status} ${response.statusText}`);
-    }
-
-    const data = await response.json();
-    console.log('✅ Configuración de trivia recibida:', data);
-    return data;
-  } catch (error) {
-    console.error('❌ Error al conectar con la API de trivia:', error);
-    throw error;
-  }
+  const mockConfig: TriviaConfig = {
+    trivia: {
+      id: triviaId,
+      nombre: 'Trivia Mock',
+      descripcion: 'Trivia de prueba',
+      company_id: 1,
+      activa: true,
+      cantidad_preguntas: 0,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    },
+    company: {
+      id: 1,
+      nombre: 'Casino D3',
+      background: '/background.png',
+      logo: '/images/d3.jpg',
+      color_primario: '#CD0303',
+      color_secundario: '#FFD700',
+      color_terciario: '#2F4F4F',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      imagenes: [],
+      juegos_habilitados: [],
+    },
+    questions: [],
+  };
+  
+  console.log('✅ Configuración mock de trivia devuelta:', mockConfig);
+  return mockConfig;
 }
 
 export async function getMemotestConfig(memotestId: number): Promise<MemotestConfig> {
-  const { apiBaseUrl } = getConfig();
+  console.log('🔧 Modo sin API - Devolviendo configuración mock de memotest:', memotestId);
   
-  console.log('🔧 Obteniendo configuración de memotest:', memotestId);
+  // Simular delay de red
+  await new Promise(resolve => setTimeout(resolve, 100));
   
-  const url = `${apiBaseUrl}/memotests/${memotestId}/config`;
-  console.log('🌐 URL de la API:', url);
-
-  try {
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: {
-        'accept': 'application/json',
-      },
-    });
-
-    console.log('📡 Respuesta de la API:', response.status, response.statusText);
-
-    if (!response.ok) {
-      throw new Error(`Error al obtener la configuración del memotest: ${response.status} ${response.statusText}`);
-    }
-
-    const data = await response.json();
-    console.log('✅ Configuración de memotest recibida:', data);
-    return data;
-  } catch (error) {
-    console.error('❌ Error al conectar con la API de memotest:', error);
-    throw error;
-  }
+  const mockConfig: MemotestConfig = {
+    memotest: {
+      id: memotestId,
+      nombre: 'Memotest Mock',
+      descripcion: 'Memotest de prueba',
+      company_id: 1,
+      activo: true,
+      cantidad_de_parejas: 0,
+      tiempo: 60,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    },
+    company: {
+      id: 1,
+      nombre: 'Casino D3',
+      background: '/background.png',
+      logo: '/images/d3.jpg',
+      color_primario: '#CD0303',
+      color_secundario: '#FFD700',
+      color_terciario: '#2F4F4F',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      imagenes: [],
+      juegos_habilitados: [],
+    },
+    parejas: [],
+  };
+  
+  console.log('✅ Configuración mock de memotest devuelta:', mockConfig);
+  return mockConfig;
 }
 
 export async function getRuletaConfig(ruletaId: number): Promise<RuletaConfig> {
-  const { apiBaseUrl } = getConfig();
+  console.log('🔧 Modo sin API - Devolviendo configuración mock de ruleta:', ruletaId);
   
-  console.log('🔧 Obteniendo configuración de ruleta:', ruletaId);
+  // Simular delay de red
+  await new Promise(resolve => setTimeout(resolve, 100));
   
-  const url = `${apiBaseUrl}/ruletas/${ruletaId}/config`;
-  console.log('🌐 URL de la API:', url);
-
-  try {
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: {
-        'accept': 'application/json',
-      },
-    });
-
-    console.log('📡 Respuesta de la API:', response.status, response.statusText);
-
-    if (!response.ok) {
-      throw new Error(`Error al obtener la configuración de la ruleta: ${response.status} ${response.statusText}`);
-    }
-
-    const data = await response.json();
-    console.log('✅ Configuración de ruleta recibida:', data);
-    return data;
-  } catch (error) {
-    console.error('❌ Error al conectar con la API de ruleta:', error);
-    throw error;
-  }
+  const mockConfig: RuletaConfig = {
+    ruleta: {
+      id: ruletaId,
+      nombre: 'Ruleta Mock',
+      descripcion: 'Ruleta de prueba',
+      company_id: 1,
+      activa: true,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    },
+    company: {
+      id: 1,
+      nombre: 'Casino D3',
+      background: '/background.png',
+      logo: '/images/d3.jpg',
+      color_primario: '#CD0303',
+      color_secundario: '#FFD700',
+      color_terciario: '#2F4F4F',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      imagenes: [],
+      juegos_habilitados: [],
+    },
+    premios: [
+      
+    ],
+  };
+  
+  console.log('✅ Configuración mock de ruleta devuelta:', mockConfig);
+  return mockConfig;
 }
 
-export async function spinRuleta(ruletaId: number): Promise<{premio_ganado: RuletaPremio, mensaje: string, exito: boolean}> {
-  const { apiBaseUrl } = getConfig();
+export async function spinRuleta(ruletaId: number): Promise<{premio_ganado: RuletaPremio | null, mensaje: string, exito: boolean}> {
+  console.log('🎰 Llamando API real para girar ruleta:', ruletaId);
   
-  console.log('🎰 Girando ruleta:', ruletaId);
-  
-  const url = `${apiBaseUrl}/ruletas/${ruletaId}/spin`;
-  console.log('🌐 URL de la API:', url);
-
   try {
-    const response = await fetch(url, {
+    const response = await fetch(`https://api-cmsd3.manzini.com.ar/ruletas/${ruletaId}/spin`, {
       method: 'POST',
       headers: {
-        'accept': 'application/json',
+        'Content-Type': 'application/json',
       },
-      body: '',
     });
 
-    console.log('📡 Respuesta de la API:', response.status, response.statusText);
-
-    if (!response.ok) {
-      throw new Error(`Error al girar la ruleta: ${response.status} ${response.statusText}`);
-    }
-
     const data = await response.json();
-    console.log('✅ Resultado del giro recibido:', data);
-    return data;
+    
+    console.log('✅ Respuesta completa de la API:', {
+      status: response.status,
+      ok: response.ok,
+      data: data
+    });
+
+    // Si la respuesta HTTP no es OK (200-299)
+    if (!response.ok) {
+      return {
+        premio_ganado: null,
+        mensaje: data.mensaje || data.message || data.error || `Error HTTP: ${response.status}`,
+        exito: false,
+      };
+    }
+    
+    // La API devuelve algo como:
+    // Éxito: { premio_ganado: {...}, mensaje: "...", exito: true }
+    // Error: { mensaje: "No hay premios disponibles", exito: false }
+    return {
+      premio_ganado: data.premio_ganado || data.premio || null,
+      mensaje: data.mensaje || data.message || 'Giro exitoso',
+      exito: data.exito !== undefined ? data.exito : data.success !== undefined ? data.success : (data.premio_ganado ? true : false),
+    };
   } catch (error) {
-    console.error('❌ Error al conectar con la API de ruleta (spin):', error);
+    console.error('❌ Error al girar la ruleta:', error);
     throw error;
   }
 }
