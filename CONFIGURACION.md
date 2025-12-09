@@ -9,8 +9,20 @@ Si las variables de entorno no se están cargando correctamente, sigue estos pas
 Crea un archivo `.env.local` en la raíz del proyecto con el siguiente contenido:
 
 ```env
-COMPANY_ID=5
-API_BASE_URL=https://api-cmsd3.emanzano.com
+NEXT_PUBLIC_COMPANY_ID=13
+NEXT_PUBLIC_API_BASE_URL=https://api-cmsd3.emanzano.com
+```
+
+**IMPORTANTE:** El prefijo `NEXT_PUBLIC_` es obligatorio para que Next.js exponga estas variables al navegador.
+
+Si ya tienes un `env.example` en el proyecto, puedes copiarlo:
+
+```bash
+# Windows (PowerShell)
+Copy-Item env.example .env.local
+
+# Linux/Mac/Git Bash
+cp env.example .env.local
 ```
 
 ### 2. Verificar que el archivo esté en la ubicación correcta
@@ -51,19 +63,27 @@ API_BASE_URL: https://api-cmsd3.emanzano.com
 
 El proyecto tiene valores por defecto configurados, por lo que debería funcionar incluso sin variables de entorno:
 
-- **COMPANY_ID por defecto**: `5`
+- **COMPANY_ID por defecto**: `13`
 - **API_BASE_URL por defecto**: `https://api-cmsd3.emanzano.com`
+
+Si el error persiste, verifica:
+1. Que el archivo `.env.local` esté en la raíz del proyecto (mismo nivel que `package.json`)
+2. Que las variables tengan el prefijo `NEXT_PUBLIC_`
+3. Que NO haya espacios antes o después de los valores
+4. Que hayas reiniciado el servidor completamente (Ctrl+C y luego `npm run dev`)
 
 ### 6. Alternativa: Modificar directamente el código
 
-Si las variables de entorno siguen sin funcionar, puedes modificar directamente el archivo `src/config/constants.ts`:
+Como última opción, si las variables de entorno siguen sin funcionar, puedes modificar directamente el archivo `src/config/constants.ts`:
 
 ```typescript
 export const DEFAULT_CONFIG = {
-  COMPANY_ID: 'TU_COMPANY_ID_AQUI',
+  COMPANY_ID: 'TU_COMPANY_ID_AQUI',  // Cambia esto por tu ID
   API_BASE_URL: 'https://api-cmsd3.emanzano.com'
 } as const;
 ```
+
+**Nota:** Esta no es la forma recomendada porque los cambios quedarán en tu repositorio. Es mejor usar variables de entorno.
 
 ## Verificación
 

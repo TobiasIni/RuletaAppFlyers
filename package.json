@@ -6,7 +6,8 @@
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "verify": "node verify-setup.js"
   },
   "dependencies": {
     "canvas-confetti": "^1.9.3",
